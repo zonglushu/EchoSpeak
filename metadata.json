@@ -1,0 +1,7 @@
+{
+  "name": "EchoSpeak Pro - English Prosody Master",
+  "description": "A professional English shadowing and oral practice app that supports both YouTube and local video/audio uploads.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
