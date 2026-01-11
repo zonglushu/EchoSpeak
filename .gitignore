@@ -68,3 +68,4 @@ desktop.ini
 
 # Local settings
 .claude/settings.local.json
+.mcp.json
