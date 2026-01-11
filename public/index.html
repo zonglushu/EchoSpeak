@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoSpeak</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+        }
+        .apps {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        .app-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 30px 20px;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 200px;
+        }
+        .app-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .app-desc {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EchoSpeak 平台</h1>
+        <p>欢迎使用 EchoSpeak，AI 驱动的语言学习和内容管理平台</p>
+        
+        <div class="apps">
+            <a href="https://echospeak-admin.vercel.app" class="app-card">
+                <div class="app-title">📊 管理端</div>
+                <div class="app-desc">内容审核、用户管理、数据分析</div>
+            </a>
+            <a href="/learner/" class="app-card">
+                <div class="app-title">🎓 学习端</div>
+                <div class="app-desc">视频学习、字幕翻译、语言练习</div>
+            </a>
+        </div>
+        
+        <div style="margin-top: 60px; color: #666; font-size: 0.9rem;">
+            <p>EchoSpeak Pro - 让语言学习更智能</p>
+        </div>
+    </div>
+</body>
+</html>

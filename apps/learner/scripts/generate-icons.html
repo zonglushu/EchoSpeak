@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Icon Generator</title>
+  <style>
+    body { margin: 0; padding: 20px; font-family: Arial, sans-serif; }
+    .icon-container { display: inline-block; margin: 10px; text-align: center; }
+    canvas { border: 1px solid #ccc; }
+    h2 { color: #0F172A; }
+    button { background: #3B82F6; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #2563EB; }
+  </style>
+</head>
+<body>
+  <h2>EchoSpeak PWA Icons Generator</h2>
+  <button onclick="generateAll()">Generate All</button>
+  <button onclick="downloadAll()" style="background: #22C55E;">Download All</button>
+  <div id="container"></div>
+
+  <script>
+    const CONFIG = {
+      sizes: [72, 96, 128, 144, 152, 192, 384, 512],
+      colors: {
+        primary: '#0F172A',
+        secondary: '#1E293B',
+        accent: '#3B82F6',
+        accentDark: '#2563EB',
+        white: '#FFFFFF'
+      }
+    };
+
+    let canvases = [];
+
+    function drawIcon(canvas, size, isMaskable = false) {
+      const ctx = canvas.getContext('2d');
+      const { primary, secondary, accent, accentDark, white } = CONFIG.colors;
+      const padding = isMaskable ? size * 0.15 : 0;
+      const safeSize = size - padding * 2;
+      const center = size / 2;
+      const radius = safeSize * 0.35;
+
+      // 背景
+      ctx.fillStyle = primary;
+      ctx.fillRect(0, 0, size, size);
+
+      if (isMaskable) {
+        ctx.fillStyle = secondary;
+        roundRect(ctx, padding, padding, safeSize, safeSize, 12);
+        ctx.fill();
+      }
+
+      // 渐变圆
+      const gradient = ctx.createRadialGradient(center, center, 0, center, center, radius);
+      gradient.addColorStop(0, accent);
+      gradient.addColorStop(1, accentDark);
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(center, center, radius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // 声波纹
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = size * 0.02;
+      ctx.globalAlpha = 0.5;
+
+      for (let i = 1; i <= 3; i++) {
+        const waveRadius = radius + size * 0.05 * i;
+        ctx.beginPath();
+        ctx.arc(center, center, waveRadius, -Math.PI * 0.3, Math.PI * 0.3);
+        ctx.stroke();
+      }
+
+      ctx.globalAlpha = 1;
+
+      // "ES" 文字
+      ctx.fillStyle = white;
+      ctx.font = `bold ${size * 0.35}px Arial, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ES', center, center + size * 0.02);
+    }
+
+    function roundRect(ctx, x, y, width, height, radius) {
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
+    }
+
+    function generateAll() {
+      const container = document.getElementById('container');
+      container.innerHTML = '';
+      canvases = [];
+
+      CONFIG.sizes.forEach(size => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'icon-container';
+
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        drawIcon(canvas, size, false);
+
+        const label = document.createElement('div');
+        label.textContent = `icon-${size}x${size}.png`;
+
+        wrapper.appendChild(canvas);
+        wrapper.appendChild(label);
+        container.appendChild(wrapper);
+
+        canvases.push({ name: `icon-${size}x${size}.png`, canvas });
+      });
+
+      // Maskable icon
+      const maskableCanvas = document.createElement('canvas');
+      maskableCanvas.width = 512;
+      maskableCanvas.height = 512;
+      drawIcon(maskableCanvas, 512, true);
+
+      const maskableWrapper = document.createElement('div');
+      maskableWrapper.className = 'icon-container';
+      maskableWrapper.innerHTML = '<canvas id="maskable"></canvas><div>icon-maskable-512x512.png</div>';
+      maskableWrapper.querySelector('#maskable').getContext('2d').drawImage(maskableCanvas, 0, 0);
+      container.appendChild(maskableWrapper);
+
+      canvases.push({ name: 'icon-maskable-512x512.png', canvas: maskableCanvas });
+
+      // Continue icon
+      const continueCanvas = document.createElement('canvas');
+      continueCanvas.width = 96;
+      continueCanvas.height = 96;
+      drawIcon(continueCanvas, 96, false);
+
+      const continueWrapper = document.createElement('div');
+      continueWrapper.className = 'icon-container';
+      continueWrapper.innerHTML = '<canvas id="continue"></canvas><div>continue-96x96.png</div>';
+      continueWrapper.querySelector('#continue').getContext('2d').drawImage(continueCanvas, 0, 0);
+      container.appendChild(continueWrapper);
+
+      canvases.push({ name: 'continue-96x96.png', canvas: continueCanvas });
+    }
+
+    function downloadAll() {
+      if (canvases.length === 0) {
+        alert('Please generate icons first!');
+        return;
+      }
+
+      canvases.forEach(({ name, canvas }) => {
+        const link = document.createElement('a');
+        link.download = name;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+
+      alert(`Downloaded ${canvases.length} icons!\n\nSave them to: apps/learner/public/icons/`);
+    }
+
+    // Auto-generate on load
+    window.onload = generateAll;
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+/learner/discover /learner/index.html 200
+/learner/favorites /learner/index.html 200
+/learner/profile /learner/index.html 200
+/learner/help /learner/index.html 200
+/learner/subscription /learner/index.html 200
+/learner/video/* /learner/index.html 200

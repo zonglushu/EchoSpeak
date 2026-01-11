@@ -1,0 +1,17 @@
+{
+  "name": "@echospeak/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "src",
+    "eslint",
+    "tsconfig.base.json"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./tailwind-preset": "./src/tailwind/preset.ts",
+    "./eslint/base": "./eslint/base.mjs",
+    "./tsconfig.base": "./tsconfig.base.json"
+  }
+}

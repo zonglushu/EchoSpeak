@@ -1,0 +1,25 @@
+{
+  "extends": "../../packages/config/tsconfig.base.json",
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "types": ["node"],
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@echospeak/ui": ["../../packages/ui/src/index.ts"],
+      "@echospeak/ui/*": ["../../packages/ui/src/*"],
+      "@echospeak/types": ["../../packages/types/src/index.ts"],
+      "@echospeak/types/*": ["../../packages/types/src/*"],
+      "@echospeak/services": ["../../packages/services/src/index.ts"],
+      "@echospeak/services/*": ["../../packages/services/src/*"],
+      "@echospeak/config": ["../../packages/config/src/index.ts"],
+      "@echospeak/config/*": ["../../packages/config/src/*"]
+    },
+    "noEmit": true
+  },
+  "include": ["src"],
+  "references": []
+}

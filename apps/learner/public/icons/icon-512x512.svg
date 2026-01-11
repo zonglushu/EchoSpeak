@@ -1,0 +1,21 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg"><rect width="512" height="512" fill="#0F172A"/>
+    <defs>
+      <radialGradient id="grad-512" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:#2563EB;stop-opacity:1" />
+      </radialGradient>
+    </defs>
+  <circle cx="256" cy="256" r="179.2" fill="url(#grad-512)"/><path d="M 51.20000000000002 256
+                  A 204.79999999999998 204.79999999999998 0 0 1 135.6215803305015 421.68668044798926"
+          fill="none" stroke="#3B82F6" stroke-width="10.24" opacity="0.5"/><path d="M 25.600000000000023 256
+                  A 230.39999999999998 230.39999999999998 0 0 1 120.57427787181419 442.39751550398785"
+          fill="none" stroke="#3B82F6" stroke-width="10.24" opacity="0.5"/><path d="M 0 256
+                  A 256 256 0 0 1 105.52697541312688 463.10835055998655"
+          fill="none" stroke="#3B82F6" stroke-width="10.24" opacity="0.5"/>
+    <text x="256" y="317.44"
+          font-family="Arial, sans-serif"
+          font-size="179.2"
+          font-weight="bold"
+          fill="#FFFFFF"
+          text-anchor="middle">ES</text>
+  </svg>

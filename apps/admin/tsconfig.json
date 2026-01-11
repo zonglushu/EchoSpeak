@@ -1,0 +1,29 @@
+{
+  "extends": "../../packages/config/tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@echospeak/ui": ["../../packages/ui/src/index.ts"],
+      "@echospeak/ui/*": ["../../packages/ui/src/*"],
+      "@echospeak/types": ["../../packages/types/src/index.ts"],
+      "@echospeak/types/*": ["../../packages/types/src/*"],
+      "@echospeak/services": ["../../packages/services/src/index.ts"],
+      "@echospeak/services/*": ["../../packages/services/src/*"],
+      "@echospeak/config": ["../../packages/config/src/index.ts"],
+      "@echospeak/config/*": ["../../packages/config/src/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules"]
+}

@@ -1,29 +1,21 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
-    "module": "ESNext",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "skipLibCheck": true,
-    "types": [
-      "node"
-    ],
-    "moduleResolution": "bundler",
-    "isolatedModules": true,
-    "moduleDetection": "force",
-    "allowJs": true,
-    "jsx": "react-jsx",
+    "baseUrl": ".",
+    "types": ["node"],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+      "@echospeak/ui": ["packages/ui/src/index.ts"],
+      "@echospeak/ui/*": ["packages/ui/src/*"],
+      "@echospeak/types": ["packages/types/src/index.ts"],
+      "@echospeak/types/*": ["packages/types/src/*"],
+      "@echospeak/services": ["packages/services/src/index.ts"],
+      "@echospeak/services/*": ["packages/services/src/*"],
+      "@echospeak/config": ["packages/config/src/index.ts"],
+      "@echospeak/config/*": ["packages/config/src/*"]
     },
-    "allowImportingTsExtensions": true,
     "noEmit": true
   }
 }

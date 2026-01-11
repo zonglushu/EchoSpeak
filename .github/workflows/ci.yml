@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build & Validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build learner app
+        run: npm run build --workspace @echospeak/learner
+
+      - name: Lint admin app
+        run: npm run lint --workspace @echospeak/admin
+
+      - name: Build admin app
+        run: npm run build --workspace @echospeak/admin
+
+      - name: Build Storybook (shared UI)
+        run: npm run build-storybook

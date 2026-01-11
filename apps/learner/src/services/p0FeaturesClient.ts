@@ -1,0 +1,614 @@
+/**
+ * P0 Features Client Wrapper
+ * Provides easy-to-use functions that work in the browser
+ */
+
+import { supabase } from '../lib/supabase';
+import type {
+  UserCheckin,
+  PracticeHistory,
+  Achievement,
+  UserAchievement,
+} from '@echospeak/types';
+
+// ============================================================================
+// P0-1: Daily Check-in System
+// ============================================================================
+
+function getYesterdayDate(): string {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return yesterday.toISOString().split('T')[0];
+}
+
+export async function recordCheckin(
+  userId: string,
+  practiceDurationSeconds: number = 0,
+  sentencesPracticed: number = 0
+): Promise<UserCheckin> {
+  const today = new Date().toISOString().split('T')[0];
+
+  // Check if already checked in today
+  const { data: existing, error: fetchError } = await supabase
+    .from('user_checkins')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('checkin_date', today)
+    .maybeSingle();
+
+  if (fetchError) throw fetchError;
+
+  if (existing) {
+    // Update existing check-in
+    const { data, error } = await supabase
+      .from('user_checkins')
+      .update({
+        practice_duration_seconds: existing.practice_duration_seconds + practiceDurationSeconds,
+        sentences_practiced: existing.sentences_practiced + sentencesPracticed,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', existing.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Calculate streak
+  const { data: yesterdayCheckin } = await supabase
+    .from('user_checkins')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('checkin_date', getYesterdayDate())
+    .maybeSingle();
+
+  const streakCount = yesterdayCheckin ? yesterdayCheckin.streak_count + 1 : 1;
+
+  // Get total checkins
+  const { count } = await supabase
+    .from('user_checkins')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', userId);
+
+  const totalCheckins = (count || 0) + 1;
+
+  // Create new check-in
+  const { data, error } = await supabase
+    .from('user_checkins')
+    .insert({
+      user_id: userId,
+      checkin_date: today,
+      streak_count: streakCount,
+      total_checkins: totalCheckins,
+      practice_duration_seconds: practiceDurationSeconds,
+      sentences_practiced: sentencesPracticed,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getUserCheckins(userId: string, limit: number = 30): Promise<UserCheckin[]> {
+  const { data, error } = await supabase
+    .from('user_checkins')
+    .select('*')
+    .eq('user_id', userId)
+    .order('checkin_date', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getCheckinCalendar(userId: string, months: number = 12): Promise<UserCheckin[]> {
+  const startDate = new Date();
+  startDate.setMonth(startDate.getMonth() - months);
+  const startDateStr = startDate.toISOString().split('T')[0];
+
+  const { data, error } = await supabase
+    .from('user_checkins')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('checkin_date', startDateStr)
+    .order('checkin_date', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+// ============================================================================
+// P0-2: Practice History
+// ============================================================================
+
+export async function recordPracticeHistory(
+  userId: string,
+  practiceData: {
+    asset_id?: string;
+    video_id?: string;
+    video_title: string;
+    video_thumbnail?: string;
+    duration_seconds: number;
+    sentences_completed: number;
+    sentences_total: number;
+  }
+): Promise<PracticeHistory> {
+  const practiceDate = new Date().toISOString().split('T')[0];
+  const progressPercentage = practiceData.sentences_total > 0
+    ? (practiceData.sentences_completed / practiceData.sentences_total) * 100
+    : 0;
+
+  const { data, error } = await supabase
+    .from('practice_history')
+    .insert({
+      user_id: userId,
+      ...practiceData,
+      practice_date: practiceDate,
+      progress_percentage: progressPercentage,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  // Also record check-in
+  await recordCheckin(userId, practiceData.duration_seconds, practiceData.sentences_completed);
+
+  return data;
+}
+
+export async function getPracticeHistory(userId: string, days: number = 30): Promise<PracticeHistory[]> {
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - days);
+  const startDateStr = startDate.toISOString().split('T')[0];
+
+  const { data, error } = await supabase
+    .from('practice_history')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('practice_date', startDateStr)
+    .order('completed_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+// ============================================================================
+// P0-3: Practice Playlist
+// ============================================================================
+
+export async function addToPlaylist(
+  userId: string,
+  videoData: {
+    asset_id?: string;
+    video_id: string;
+    video_title: string;
+    video_thumbnail?: string;
+    video_duration?: number;
+  }
+) {
+  // Get current max sort_order
+  const { data: existing } = await supabase
+    .from('practice_playlist')
+    .select('sort_order')
+    .eq('user_id', userId)
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const nextOrder = existing ? existing.sort_order + 1 : 0;
+
+  const { data, error } = await supabase
+    .from('practice_playlist')
+    .insert({
+      user_id: userId,
+      ...videoData,
+      sort_order: nextOrder,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getPlaylist(userId: string) {
+  const { data, error } = await supabase
+    .from('practice_playlist')
+    .select('*')
+    .eq('user_id', userId)
+    .order('sort_order', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function removeFromPlaylist(userId: string, playlistItemId: string) {
+  const { error } = await supabase
+    .from('practice_playlist')
+    .delete()
+    .eq('id', playlistItemId)
+    .eq('user_id', userId);
+
+  if (error) throw error;
+}
+
+export async function reorderPlaylist(userId: string, itemIds: string[]) {
+  // Update sort_order for each item
+  const updates = itemIds.map((id, index) => ({
+    id,
+    sort_order: index,
+  }));
+
+  for (const update of updates) {
+    await supabase
+      .from('practice_playlist')
+      .update({ sort_order: update.sort_order })
+      .eq('id', update.id)
+      .eq('user_id', userId);
+  }
+}
+
+// ============================================================================
+// P0-4: Achievement System
+// ============================================================================
+
+export async function getAchievements(): Promise<Achievement[]> {
+  const { data, error } = await supabase
+    .from('achievements')
+    .select('*')
+    .eq('is_active', true)
+    .order('category', { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getUserAchievements(userId: string): Promise<UserAchievement[]> {
+  const { data, error } = await supabase
+    .from('user_achievements')
+    .select(`
+      *,
+      achievements (*)
+    `)
+    .eq('user_id', userId)
+    .order('earned_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function checkAndAwardAchievements(userId: string): Promise<Achievement[]> {
+  // Get user stats
+  const { data: stats } = await supabase
+    .from('user_stats')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (!stats) return [];
+
+  // Get all achievements
+  const { data: allAchievements } = await supabase
+    .from('achievements')
+    .select('*')
+    .eq('is_active', true);
+
+  if (!allAchievements) return [];
+
+  // Get already earned achievements
+  const { data: earnedAchievements } = await supabase
+    .from('user_achievements')
+    .select('achievement_id')
+    .eq('user_id', userId);
+
+  const earnedIds = new Set(earnedAchievements?.map(a => a.achievement_id) || []);
+  const newAchievements: Achievement[] = [];
+
+  // Check each achievement
+  for (const achievement of allAchievements) {
+    if (earnedIds.has(achievement.id)) continue;
+
+    let earned = false;
+
+    switch (achievement.requirement_type) {
+      case 'streak_days':
+        earned = stats.current_streak >= achievement.requirement_value;
+        break;
+      case 'total_practices':
+        earned = stats.total_checkins >= achievement.requirement_value;
+        break;
+      case 'total_sentences':
+        earned = stats.total_sentences_practiced >= achievement.requirement_value;
+        break;
+      case 'total_seconds':
+        earned = stats.total_practice_seconds >= achievement.requirement_value;
+        break;
+      case 'playlist_count':
+        const { count } = await supabase
+          .from('practice_playlist')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId);
+        earned = (count || 0) >= achievement.requirement_value;
+        break;
+    }
+
+    if (earned) {
+      // Award achievement
+      await supabase
+        .from('user_achievements')
+        .insert({
+          user_id: userId,
+          achievement_id: achievement.id,
+        });
+
+      newAchievements.push(achievement);
+    }
+  }
+
+  return newAchievements;
+}
+
+// ============================================================================
+// P0-6: Trending Content
+// ============================================================================
+
+export async function recordView(
+  userId: string,
+  viewData: {
+    asset_id?: string;
+    video_id: string;
+    view_duration_seconds?: number;
+    completed?: boolean;
+  }
+) {
+  const { error } = await supabase
+    .from('view_history')
+    .insert({
+      user_id: userId,
+      ...viewData,
+    });
+
+  if (error) throw error;
+}
+
+export async function getTrendingContent(period: 'today' | 'week' | 'month' = 'week') {
+  let startDate = new Date();
+  
+  switch (period) {
+    case 'today':
+      startDate.setHours(0, 0, 0, 0);
+      break;
+    case 'week':
+      startDate.setDate(startDate.getDate() - 7);
+      break;
+    case 'month':
+      startDate.setMonth(startDate.getMonth() - 1);
+      break;
+  }
+
+  const { data, error } = await supabase
+    .from('view_history')
+    .select('video_id, asset_id')
+    .gte('viewed_at', startDate.toISOString());
+
+  if (error) throw error;
+
+  // Count views per video
+  const viewCounts = new Map<string, number>();
+  data?.forEach(view => {
+    const key = view.video_id || view.asset_id || '';
+    viewCounts.set(key, (viewCounts.get(key) || 0) + 1);
+  });
+
+  // Sort by view count
+  const sorted = Array.from(viewCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+
+  return sorted.map(([video_id, view_count]) => ({
+    video_id,
+    view_count,
+    period,
+  }));
+}
+
+// ============================================================
+// Notification Functions (P0-5)
+// ============================================================
+
+/**
+ * Get recent achievements for notifications
+ */
+export async function getRecentAchievements(userId: string, limit: number = 5) {
+  const { data, error } = await supabase
+    .from('user_achievements')
+    .select('*, achievements(*)')
+    .eq('user_id', userId)
+    .order('earned_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Get streak reminder if user hasn't practiced today
+ */
+export async function getStreakReminders(userId: string) {
+  const today = new Date().toISOString().split('T')[0];
+  
+  const { data, error } = await supabase
+    .from('user_checkins')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('checkin_date', today);
+
+  if (error) throw error;
+
+  // If no checkin today, return reminder
+  if (!data || data.length === 0) {
+    const { data: stats } = await supabase
+      .from('user_stats')
+      .select('current_streak')
+      .eq('user_id', userId)
+      .single();
+
+    return {
+      needsReminder: true,
+      currentStreak: stats?.current_streak || 0,
+    };
+  }
+
+  return { needsReminder: false };
+}
+
+/**
+ * Mark notification as read (placeholder - extend if you add notifications table)
+ */
+export async function markNotificationRead(notificationId: string) {
+  // If you add a notifications table later, implement this
+  // For now, just return success
+  return { success: true };
+}
+
+// ============================================================
+// Utility Functions
+// ============================================================
+
+/**
+ * Get user stats summary
+ */
+export async function getUserStats(userId: string) {
+  const { data, error } = await supabase
+    .from('user_stats')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error && error.code !== 'PGRST116') {
+    // PGRST116 = no rows found, which is fine for new users
+    throw error;
+  }
+
+  // 如果没有统计数据，创建初始记录
+  if (!data) {
+    const { data: newStats, error: insertError } = await supabase
+      .from('user_stats')
+      .insert({
+        user_id: userId,
+        total_practice_seconds: 0,
+        total_sentences_practiced: 0,
+        total_videos_completed: 0,
+        current_streak: 0,
+        longest_streak: 0,
+        total_checkins: 0,
+        total_xp: 0,
+        level: 1,
+      })
+      .select()
+      .single();
+
+    if (insertError) {
+      // 如果插入失败（可能并发插入），重新查询
+      const { data: retryData } = await supabase
+        .from('user_stats')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+      return retryData || null;
+    }
+
+    return newStats;
+  }
+
+  return data;
+}
+
+/**
+ * Format duration in seconds to readable string
+ */
+export function formatDuration(seconds: number): string {
+  if (!seconds || seconds < 60) return '0m';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  return `${hours}h ${minutes}m`;
+}
+
+/**
+ * Request notification permission from the browser
+ */
+export async function requestNotificationPermission(): Promise<NotificationPermission> {
+  if (!('Notification' in window)) {
+    console.warn('This browser does not support notifications');
+    return 'denied';
+  }
+
+  if (Notification.permission === 'granted') {
+    return 'granted';
+  }
+
+  if (Notification.permission !== 'denied') {
+    const permission = await Notification.requestPermission();
+    return permission;
+  }
+
+  return Notification.permission;
+}
+
+/**
+ * Show a browser notification
+ */
+export function showNotification(title: string, options?: NotificationOptions) {
+  if (!('Notification' in window)) {
+    console.warn('This browser does not support notifications');
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    new Notification(title, {
+      icon: '/icon-192x192.png', // Update with your app icon
+      badge: '/badge-72x72.png',
+      ...options,
+    });
+  }
+}
+
+/**
+ * Schedule daily reminder (simplified version using setTimeout)
+ * For production, consider using Service Workers
+ */
+export function scheduleDailyReminder(hour: number = 20, minute: number = 0) {
+  const now = new Date();
+  const scheduledTime = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    hour,
+    minute,
+    0
+  );
+
+  // If the time has passed today, schedule for tomorrow
+  if (scheduledTime <= now) {
+    scheduledTime.setDate(scheduledTime.getDate() + 1);
+  }
+
+  const timeUntilReminder = scheduledTime.getTime() - now.getTime();
+
+  setTimeout(() => {
+    showNotification('⏰ 练习提醒', {
+      body: '别忘了今天的学习哦！保持连续打卡记录 🔥',
+      tag: 'daily-reminder',
+      requireInteraction: false,
+    });
+
+    // Schedule next day's reminder
+    scheduleDailyReminder(hour, minute);
+  }, timeUntilReminder);
+
+  console.log(`Daily reminder scheduled for ${scheduledTime.toLocaleString()}`);
+}

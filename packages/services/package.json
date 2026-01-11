@@ -1,0 +1,15 @@
+{
+  "name": "@echospeak/services",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./gemini": "./src/gemini.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@echospeak/types": "0.1.0",
+    "@google/genai": "^1.34.0"
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "$schema": "https://raw.githubusercontent.com/six7/figma-tokens/refs/heads/main/tokens.schema.json",
+  "$description": "Design tokens exported from EchoSpeak Stage 1. Import via Tokens Studio or Figma Variables to keep Storybook/UI libraries aligned.",
+  "global": {
+    "fontFamilies": {
+      "sans": {
+        "value": "SF Pro Display, SF Pro Text, Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        "type": "fontFamilies"
+      },
+      "mono": {
+        "value": "'JetBrains Mono', 'SF Mono', monospace",
+        "type": "fontFamilies"
+      }
+    },
+    "lineHeights": {
+      "tight": { "value": "110%", "type": "lineHeights" },
+      "snug": { "value": "120%", "type": "lineHeights" },
+      "cozy": { "value": "135%", "type": "lineHeights" }
+    },
+    "fontWeights": {
+      "regular": { "value": 400, "type": "fontWeights" },
+      "medium": { "value": 500, "type": "fontWeights" },
+      "bold": { "value": 700, "type": "fontWeights" },
+      "black": { "value": 900, "type": "fontWeights" }
+    },
+    "letterSpacing": {
+      "tight": { "value": "-0.01em", "type": "letterSpacing" },
+      "normal": { "value": "0em", "type": "letterSpacing" },
+      "wide": { "value": "0.02em", "type": "letterSpacing" }
+    },
+    "paragraphSpacing": {
+      "none": { "value": "0px", "type": "paragraphSpacing" }
+    },
+    "fontSizes": {
+      "caption": { "value": "13px", "type": "fontSizes" },
+      "body": { "value": "16px", "type": "fontSizes" },
+      "h3": { "value": "22px", "type": "fontSizes" },
+      "h2": { "value": "28px", "type": "fontSizes" },
+      "h1": { "value": "34px", "type": "fontSizes" },
+      "prosody": { "value": "15px", "type": "fontSizes" }
+    },
+    "dimension": {
+      "spacing-1": { "value": "4px", "type": "dimension" },
+      "spacing-2": { "value": "8px", "type": "dimension" },
+      "spacing-3": { "value": "12px", "type": "dimension" },
+      "spacing-4": { "value": "16px", "type": "dimension" },
+      "spacing-6": { "value": "24px", "type": "dimension" },
+      "spacing-8": { "value": "32px", "type": "dimension" },
+      "spacing-12": { "value": "48px", "type": "dimension" },
+      "spacing-18": { "value": "72px", "type": "dimension" }
+    },
+    "borderRadius": {
+      "pill": { "value": "999px", "type": "borderRadius" },
+      "glass": { "value": "24px", "type": "borderRadius" },
+      "xl": { "value": "32px", "type": "borderRadius" }
+    },
+    "shadow": {
+      "glass": {
+        "value": "0px 20px 70px rgba(15, 23, 42, 0.25)",
+        "type": "boxShadow"
+      },
+      "panel": {
+        "value": "0px 12px 32px rgba(15, 23, 42, 0.18)",
+        "type": "boxShadow"
+      }
+    }
+  },
+  "modes": {
+    "light": {
+      "color": {
+        "bg": { "value": "#F8FAFF", "type": "color" },
+        "surface": { "value": "rgba(255,255,255,0.85)", "type": "color" },
+        "primary": { "value": "#2563EB", "type": "color" },
+        "primary-light": { "value": "#60A5FA", "type": "color" },
+        "primary-dark": { "value": "#1D4ED8", "type": "color" },
+        "accent": { "value": "#F4D35E", "type": "color" },
+        "muted": { "value": "#94A3B8", "type": "color" },
+        "success": { "value": "#22C55E", "type": "color" },
+        "warning": { "value": "#F97316", "type": "color" },
+        "danger": { "value": "#EF4444", "type": "color" }
+      }
+    },
+    "dark": {
+      "color": {
+        "bg": { "value": "#030712", "type": "color" },
+        "surface": { "value": "rgba(15,23,42,0.85)", "type": "color" },
+        "primary": { "value": "#60A5FA", "type": "color" },
+        "primary-light": { "value": "#93C5FD", "type": "color" },
+        "primary-dark": { "value": "#1E3A8A", "type": "color" },
+        "accent": { "value": "#F2C14E", "type": "color" },
+        "muted": { "value": "#CBD5F5", "type": "color" },
+        "success": { "value": "#4ADE80", "type": "color" },
+        "warning": { "value": "#FDBA74", "type": "color" },
+        "danger": { "value": "#F87171", "type": "color" }
+      }
+    }
+  },
+  "typography": {
+    "heading": {
+      "h1": {
+        "value": {
+          "fontFamily": "{global.fontFamilies.sans}",
+          "fontWeight": "{global.fontWeights.black}",
+          "lineHeight": "{global.lineHeights.snug}",
+          "letterSpacing": "{global.letterSpacing.tight}",
+          "fontSize": "{global.fontSizes.h1}",
+          "paragraphSpacing": "{global.paragraphSpacing.none}"
+        },
+        "type": "typography"
+      },
+      "h2": {
+        "value": {
+          "fontFamily": "{global.fontFamilies.sans}",
+          "fontWeight": "{global.fontWeights.black}",
+          "lineHeight": "{global.lineHeights.snug}",
+          "letterSpacing": "-0.005em",
+          "fontSize": "{global.fontSizes.h2}",
+          "paragraphSpacing": "0px"
+        },
+        "type": "typography"
+      },
+      "h3": {
+        "value": {
+          "fontFamily": "{global.fontFamilies.sans}",
+          "fontWeight": "{global.fontWeights.bold}",
+          "lineHeight": "{global.lineHeights.cozy}",
+          "letterSpacing": "{global.letterSpacing.normal}",
+          "fontSize": "{global.fontSizes.h3}",
+          "paragraphSpacing": "0px"
+        },
+        "type": "typography"
+      }
+    },
+    "body": {
+      "default": {
+        "value": {
+          "fontFamily": "{global.fontFamilies.sans}",
+          "fontWeight": "{global.fontWeights.medium}",
+          "lineHeight": "{global.lineHeights.cozy}",
+          "letterSpacing": "{global.letterSpacing.normal}",
+          "fontSize": "{global.fontSizes.body}",
+          "paragraphSpacing": "0px"
+        },
+        "type": "typography"
+      },
+      "caption": {
+        "value": {
+          "fontFamily": "{global.fontFamilies.sans}",
+          "fontWeight": "{global.fontWeights.medium}",
+          "lineHeight": "{global.lineHeights.cozy}",
+          "letterSpacing": "{global.letterSpacing.wide}",
+          "fontSize": "{global.fontSizes.caption}",
+          "paragraphSpacing": "0px"
+        },
+        "type": "typography"
+      },
+      "prosody": {
+        "value": {
+          "fontFamily": "{global.fontFamilies.mono}",
+          "fontWeight": "{global.fontWeights.medium}",
+          "lineHeight": "{global.lineHeights.cozy}",
+          "letterSpacing": "{global.letterSpacing.wide}",
+          "fontSize": "{global.fontSizes.prosody}",
+          "paragraphSpacing": "0px"
+        },
+        "type": "typography"
+      }
+    }
+  }
+}
