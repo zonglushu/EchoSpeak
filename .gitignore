@@ -7,10 +7,26 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build outputs
 dist
 dist-ssr
-*.local
+build
+out
+.next
+dev-dist
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Environment variables (keep examples)
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.*.example
 
 # Editor directories and files
 .vscode/*
@@ -22,9 +38,33 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+Thumbs.db
 
+# Storybook
 *storybook.log
 storybook-static
 
+# Deployment
 .vercel
-.env*.local
+
+# PWA generated files
+apps/learner/dev-dist/
+public/learner/assets/
+public/learner/sw.js
+public/learner/workbox-*.js
+public/learner/registerSW.js
+
+# Local reports and temporary files
+localhost_*.report.*
+*.backup
+*.bak
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local settings
+.claude/settings.local.json
