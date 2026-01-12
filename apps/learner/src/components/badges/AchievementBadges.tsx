@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-4: Achievement Badges System
  * Displays earned and locked achievements with celebration animations
  */
@@ -49,7 +49,7 @@ export const AchievementBadges: React.FC<AchievementBadgesProps> = ({ userId }) 
       case 'common':
         return 'bg-slate-600 border-slate-500';
       case 'rare':
-        return 'bg-blue-600/80 border-blue-500';
+        return 'bg-teal-600/80 border-teal-500';
       case 'epic':
         return 'bg-purple-600/80 border-purple-500';
       case 'legendary':
@@ -140,7 +140,7 @@ export const AchievementBadges: React.FC<AchievementBadgesProps> = ({ userId }) 
             onClick={() => setSelectedCategory(category)}
             className={`px-4 py-2 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${
               selectedCategory === category
-                ? 'bg-blue-600 text-white'
+                ? 'bg-teal-600 text-white'
                 : 'bg-slate-700/50 text-slate-400 hover:bg-slate-700'
             }`}
           >

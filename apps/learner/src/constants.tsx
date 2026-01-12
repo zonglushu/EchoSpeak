@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { NotationGuide, TranscriptLine } from '@echospeak/types';
 
 export const NOTATION_GUIDE: NotationGuide[] = [
@@ -7,7 +7,7 @@ export const NOTATION_GUIDE: NotationGuide[] = [
     description:
       'Nuclear Stress (核重音). The core intent of the sentence. Highest pitch, longest duration.',
     example: 'I love **PIZZA**.',
-    color: 'text-blue-600 font-black',
+    color: 'text-teal-600 font-black',
   },
   {
     symbol: 'Italics',
@@ -37,7 +37,7 @@ export const NOTATION_GUIDE: NotationGuide[] = [
     symbol: '| / ||',
     description: 'Pauses (短/长停顿). Strategic breaks for rhythm or suspense.',
     example: 'Wait | for it.',
-    color: 'text-purple-600 font-bold',
+    color: 'text-cyan-600 font-bold',
   },
 ];
 

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Tv, Loader2, BrainCircuit, Mic, Type, EyeOff, AlertCircle, Info, CheckCircle2 } from 'lucide-react';
 import { TranscriptLine, PlaybackState } from '@echospeak/types';
 import { ProsodyRenderer, NotationLegend } from '@echospeak/ui';
@@ -75,7 +75,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
       {/* 顶部导航栏 */}
       <nav className="h-20 border-b border-white/5 bg-slate-950/50 backdrop-blur-2xl sticky top-0 z-50 flex items-center px-8 gap-10">
         <div className="flex items-center gap-4 shrink-0">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+          <div className="w-10 h-10 bg-teal-600 rounded-xl flex items-center justify-center shadow-lg">
             <Tv className="text-white w-6 h-6" />
           </div>
           <h1 className="text-xl font-black tracking-tighter">
@@ -94,7 +94,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           <button
             onClick={onYouTubeUrlSubmit}
             disabled={!youtubeUrl.trim() || isFetchingCaptions}
-            className="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-teal-600 hover:bg-teal-500 px-6 py-3 rounded-2xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isFetchingCaptions ? (
               <>
@@ -118,7 +118,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             onClick={onToggleLibrary}
             className={`p-3 rounded-xl border transition-all ${
               showLibrary
-                ? 'bg-blue-600 border-blue-500'
+                ? 'bg-teal-600 border-teal-500'
                 : 'bg-white/5 border-white/10 hover:bg-white/10'
             }`}
           >
@@ -128,7 +128,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             onClick={onToggleLegend}
             className={`p-3 rounded-xl border transition-all ${
               showLegend
-                ? 'bg-blue-600 border-blue-500'
+                ? 'bg-teal-600 border-teal-500'
                 : 'bg-white/5 border-white/10 hover:bg-white/10'
             }`}
           >
@@ -182,12 +182,12 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-3xl flex flex-col items-center justify-center p-12 text-center z-50">
                 <div className="relative mb-8">
                   <div className="w-32 h-32 border-4 border-blue-400/10 border-t-blue-500 rounded-full animate-spin"></div>
-                  <BrainCircuit className="absolute inset-0 m-auto w-12 h-12 text-blue-400 animate-pulse" />
+                  <BrainCircuit className="absolute inset-0 m-auto w-12 h-12 text-teal-400 animate-pulse" />
                 </div>
                 <h2 className="text-2xl font-black mb-2 tracking-tight">
                   AI 智能处理中...
                 </h2>
-                <p className="text-blue-100/70 text-sm font-medium">
+                <p className="text-teal-100/70 text-sm font-medium">
                   {isFetchingCaptions
                     ? '正在获取 YouTube 字幕...'
                     : isImporting
@@ -203,7 +203,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
                   <p className="text-white text-2xl font-black leading-tight tracking-tight drop-shadow-xl">
                     {activeLine?.text || '准备开始跟读'}
                   </p>
-                  <p className="text-blue-400/80 text-sm font-bold mt-2 uppercase tracking-[0.2em]">
+                  <p className="text-teal-400/80 text-sm font-bold mt-2 uppercase tracking-[0.2em]">
                     {activeLine?.translation}
                   </p>
                 </div>
@@ -217,7 +217,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
                 title={showOverlaySubtitle ? '隐藏字幕' : '显示字幕'}
               >
                 {showOverlaySubtitle ? (
-                  <Type className="w-5 h-5 text-blue-400" />
+                  <Type className="w-5 h-5 text-teal-400" />
                 ) : (
                   <EyeOff className="w-5 h-5 text-slate-400" />
                 )}
@@ -230,7 +230,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
 
           <div className="bg-white/5 rounded-[3rem] p-12 border border-white/10 min-h-[300px] relative overflow-hidden">
             <div className="flex items-center gap-6 mb-10 relative z-10">
-              <div className="p-4 bg-blue-600 rounded-3xl shadow-xl shadow-blue-600/20">
+              <div className="p-4 bg-teal-600 rounded-3xl shadow-xl shadow-blue-600/20">
                 <BrainCircuit className="w-7 h-7 text-white" />
               </div>
               <div>
@@ -281,7 +281,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
                   }}
                   className={`p-8 rounded-[2rem] cursor-pointer transition-all border-2 active:scale-[0.98] ${
                     activeId === line.id
-                      ? 'bg-blue-600 border-blue-500 text-white shadow-3xl'
+                      ? 'bg-teal-600 border-teal-500 text-white shadow-3xl'
                       : 'bg-white/5 border-transparent hover:bg-white/10'
                   }`}
                 >
@@ -298,7 +298,7 @@ export const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               ))}
             </div>
             <button className="mt-10 w-full py-8 rounded-[2rem] bg-slate-900 hover:bg-black transition-all flex flex-col items-center gap-3 group shadow-2xl">
-              <div className="p-4 rounded-full bg-blue-600 group-hover:scale-110 transition-transform shadow-lg shadow-blue-600/30">
+              <div className="p-4 rounded-full bg-teal-600 group-hover:scale-110 transition-transform shadow-lg shadow-blue-600/30">
                 <Mic className="w-6 h-6 text-white" />
               </div>
               <span className="text-[10px] font-black uppercase tracking-[0.2em]">

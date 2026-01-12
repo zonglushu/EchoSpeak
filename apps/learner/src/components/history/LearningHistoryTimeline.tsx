@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-2: Learning History Timeline
  * Displays practice sessions grouped by date with progress visualization
  */
@@ -132,8 +132,8 @@ export const LearningHistoryTimeline: React.FC<LearningHistoryTimelineProps> = (
         {/* Summary Stats */}
         <div className="grid grid-cols-3 gap-4 mt-4">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <PlayCircle className="w-4 h-4 text-blue-400" />
+            <div className="p-2 bg-teal-500/20 rounded-lg">
+              <PlayCircle className="w-4 h-4 text-teal-400" />
             </div>
             <div>
               <div className="text-lg font-bold text-white">{totalSessions}</div>
@@ -152,8 +152,8 @@ export const LearningHistoryTimeline: React.FC<LearningHistoryTimelineProps> = (
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <TrendingUp className="w-4 h-4 text-purple-400" />
+            <div className="p-2 bg-cyan-500/20 rounded-lg">
+              <TrendingUp className="w-4 h-4 text-cyan-400" />
             </div>
             <div>
               <div className="text-lg font-bold text-white">{totalSentences}</div>
@@ -176,7 +176,7 @@ export const LearningHistoryTimeline: React.FC<LearningHistoryTimelineProps> = (
           groupedHistory.map((group) => (
             <div
               key={group.date}
-              className="border-l-2 border-slate-700 pl-4 hover:border-blue-500 transition-colors"
+              className="border-l-2 border-slate-700 pl-4 hover:border-teal-500 transition-colors"
             >
               {/* Date Header */}
               <button

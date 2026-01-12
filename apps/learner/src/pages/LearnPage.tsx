@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BookOpen, Play, CheckCircle, Info, ArrowRight } from 'lucide-react';
 
 export const LearnPage: React.FC = () => {
@@ -63,16 +63,16 @@ export const LearnPage: React.FC = () => {
       {/* Content */}
       <div className="px-4 py-6">
         {/* 引导说明卡片 */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-5 mb-6 border border-blue-200 dark:border-blue-800">
+        <div className="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-5 mb-6 border border-teal-200 dark:border-teal-800">
           <div className="flex items-start gap-3 mb-4">
-            <div className="p-2 bg-blue-100 dark:bg-blue-800/30 rounded-lg flex-shrink-0">
-              <Info className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <div className="p-2 bg-teal-100 dark:bg-teal-800/30 rounded-lg flex-shrink-0">
+              <Info className="w-5 h-5 text-teal-600 dark:text-teal-400" />
             </div>
             <div className="flex-1">
-              <h3 className="text-base font-black text-blue-900 dark:text-blue-100 mb-2">
+              <h3 className="text-base font-black text-teal-900 dark:text-teal-100 mb-2">
                 什么是发音谱子？
               </h3>
-              <p className="text-sm text-blue-800 dark:text-blue-200 leading-relaxed mb-3">
+              <p className="text-sm text-teal-800 dark:text-teal-200 leading-relaxed mb-3">
                 发音谱子是一套特殊的符号系统，用来标注英语的<span className="font-bold">重音、语调、连读</span>等发音要点。就像音乐乐谱告诉你怎么唱歌一样，发音谱子告诉你怎么"说"英语。
               </p>
             </div>
@@ -80,29 +80,29 @@ export const LearnPage: React.FC = () => {
 
           <div className="space-y-2 mb-4">
             <div className="flex items-start gap-2">
-              <span className="text-blue-600 dark:text-blue-400 font-bold">•</span>
-              <p className="text-sm text-blue-800 dark:text-blue-200">
+              <span className="text-teal-600 dark:text-teal-400 font-bold">•</span>
+              <p className="text-sm text-teal-800 dark:text-teal-200">
                 <span className="font-bold">重音（_）</span>：告诉你哪个词需要重读
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-blue-600 dark:text-blue-400 font-bold">•</span>
-              <p className="text-sm text-blue-800 dark:text-blue-200">
+              <span className="text-teal-600 dark:text-teal-400 font-bold">•</span>
+              <p className="text-sm text-teal-800 dark:text-teal-200">
                 <span className="font-bold">语调（↗ ↘）</span>：标注句子的升调和降调
               </p>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-blue-600 dark:text-blue-400 font-bold">•</span>
-              <p className="text-sm text-blue-800 dark:text-blue-200">
+              <span className="text-teal-600 dark:text-teal-400 font-bold">•</span>
+              <p className="text-sm text-teal-800 dark:text-teal-200">
                 <span className="font-bold">连读（‿）</span>：标示需要连读的词
               </p>
             </div>
           </div>
 
-          <div className="bg-white/50 dark:bg-black/20 rounded-xl p-3 border border-blue-200 dark:border-blue-700">
-            <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+          <div className="bg-white/50 dark:bg-black/20 rounded-xl p-3 border border-teal-200 dark:border-teal-700">
+            <p className="text-xs text-teal-700 dark:text-teal-300 leading-relaxed">
               <span className="font-bold">💡 示例：</span>
-              <span className="font-mono bg-blue-100 dark:bg-blue-900 px-1.5 py-0.5 rounded text-xs">
+              <span className="font-mono bg-teal-100 dark:bg-teal-900 px-1.5 py-0.5 rounded text-xs">
                 Hel`lo_ ↗ how are ↘ you?
               </span>
               <br />
@@ -110,18 +110,18 @@ export const LearnPage: React.FC = () => {
             </p>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-700">
-            <p className="text-xs text-blue-700 dark:text-blue-300 font-bold mb-2">
+          <div className="mt-4 pt-4 border-t border-teal-200 dark:border-teal-700">
+            <p className="text-xs text-teal-700 dark:text-teal-300 font-bold mb-2">
               为什么要学习发音谱子？
             </p>
             <div className="space-y-1.5">
-              <p className="text-xs text-blue-800 dark:text-blue-200">
+              <p className="text-xs text-teal-800 dark:text-teal-200">
                 ✅ 让你的英语发音更地道、更自然
               </p>
-              <p className="text-xs text-blue-800 dark:text-blue-200">
+              <p className="text-xs text-teal-800 dark:text-teal-200">
                 ✅ 掌握英语的节奏和韵律
               </p>
-              <p className="text-xs text-blue-800 dark:text-blue-200">
+              <p className="text-xs text-teal-800 dark:text-teal-200">
                 ✅ 跟读练习时知道重点在哪里
               </p>
             </div>
@@ -243,11 +243,11 @@ export const LearnPage: React.FC = () => {
         </div>
 
         {/* Coming Soon Notice */}
-        <div className="mt-8 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
-          <p className="text-sm font-bold text-blue-900 dark:text-blue-100 mb-2">
+        <div className="mt-8 p-5 bg-teal-50 dark:bg-teal-900/20 rounded-2xl border border-teal-200 dark:border-teal-800">
+          <p className="text-sm font-bold text-teal-900 dark:text-teal-100 mb-2">
             📚 教程内容即将上线
           </p>
-          <p className="text-xs text-blue-700 dark:text-blue-300 leading-relaxed">
+          <p className="text-xs text-teal-700 dark:text-teal-300 leading-relaxed">
             我们正在精心准备教学视频和练习材料，帮助你快速掌握发音谱子的使用方法。敬请期待！
           </p>
         </div>

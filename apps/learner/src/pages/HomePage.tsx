@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Play, Clock, Flame, BarChart3, Target, ArrowRight, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthProvider';
@@ -106,9 +106,9 @@ export const HomePage: React.FC<HomePageProps> = ({
       case 'beginner':
         return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
       case 'intermediate':
-        return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+        return 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400';
       case 'advanced':
-        return 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400';
+        return 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400';
       default:
         return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400';
     }
@@ -197,7 +197,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* 学习报告入口卡片 */}
         <button
           onClick={() => navigate('/profile')}
-          className="w-full bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-5 text-white hover:shadow-xl transition-all active:scale-[0.98]"
+          className="w-full bg-gradient-to-br from-teal-600 to-cyan-500 rounded-2xl p-5 text-white hover:shadow-xl transition-all active:scale-[0.98]"
         >
           <div className="flex items-center justify-between">
             <div className="text-left">
@@ -219,7 +219,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             {recentPractice.length > 0 && (
               <button
                 onClick={() => navigate('/profile')}
-                className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+                className="text-xs text-teal-600 dark:text-teal-400 font-semibold hover:underline"
               >
                 查看全部 →
               </button>
@@ -330,7 +330,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </h2>
             <button
               onClick={() => navigate('/learn')}
-              className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+              className="text-xs text-teal-600 dark:text-teal-400 font-semibold hover:underline"
             >
               查看全部 →
             </button>
@@ -351,7 +351,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             </h2>
             <button
               onClick={() => navigate('/learn')}
-              className="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+              className="text-xs text-teal-600 dark:text-teal-400 font-semibold hover:underline"
             >
               查看全部 →
             </button>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 /**
@@ -104,13 +104,13 @@ export function PWAInstallPrompt() {
         <div className="flex items-start gap-4">
           {/* 应用图标 */}
           <div className="flex-shrink-0 w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg">
-            <span className="text-2xl font-bold text-blue-600">ES</span>
+            <span className="text-2xl font-bold text-teal-600">ES</span>
           </div>
 
           {/* 文本 */}
           <div className="flex-1">
             <h3 className="font-bold text-lg mb-1">安装 EchoSpeak</h3>
-            <p className="text-blue-100 text-sm mb-3">
+            <p className="text-teal-100 text-sm mb-3">
               {isIOS
                 ? '添加到主屏幕，获得最佳学习体验'
                 : '安装应用到桌面，离线也能学习'}
@@ -122,7 +122,7 @@ export function PWAInstallPrompt() {
                 <p className="mb-2">
                   <span className="font-semibold">iOS 安装步骤：</span>
                 </p>
-                <ol className="space-y-1 text-blue-100 list-decimal list-inside">
+                <ol className="space-y-1 text-teal-100 list-decimal list-inside">
                   <li>点击底部的分享按钮 <span className="inline-block">↑</span></li>
                   <li>向下滚动，选择"添加到主屏幕"</li>
                   <li>点击"添加"完成安装</li>
@@ -134,13 +134,13 @@ export function PWAInstallPrompt() {
             <div className="flex gap-2">
               <button
                 onClick={handleInstall}
-                className="flex-1 bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg"
+                className="flex-1 bg-white text-teal-600 px-4 py-2 rounded-lg font-semibold hover:bg-teal-50 transition-colors shadow-lg"
               >
                 {isIOS ? '知道了' : '立即安装'}
               </button>
               <button
                 onClick={handleDismiss}
-                className="px-4 py-2 text-blue-100 hover:text-white transition-colors"
+                className="px-4 py-2 text-teal-100 hover:text-white transition-colors"
               >
                 暂不
               </button>

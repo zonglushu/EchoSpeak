@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 interface AuthFormProps {
@@ -176,11 +176,11 @@ export function AuthForm({ onLoginSuccess }: AuthFormProps) {
 
           {/* 测试账户提示 */}
           {isLogin && (
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm font-medium text-blue-900 mb-2">
+            <div className="mt-6 p-4 bg-teal-50 border border-teal-200 rounded-lg">
+              <p className="text-sm font-medium text-teal-900 mb-2">
                 🧪 测试账户
               </p>
-              <div className="text-xs text-blue-800 space-y-1">
+              <div className="text-xs text-teal-800 space-y-1">
                 <p><strong>Free:</strong> free-user@echospeak.test</p>
                 <p><strong>Pro:</strong> pro-user@echospeak.test</p>
                 <p><strong>Premium:</strong> premium-user@echospeak.test</p>

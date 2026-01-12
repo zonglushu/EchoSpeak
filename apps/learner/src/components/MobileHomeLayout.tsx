@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Play, Pause, Tv, Loader2, BrainCircuit, Mic, Type, EyeOff } from 'lucide-react';
 import { TranscriptLine, PlaybackState } from '@echospeak/types';
 import { ProsodyRenderer } from '@echospeak/ui';
@@ -75,7 +75,7 @@ export const MobileHomeLayout: React.FC<MobileHomeLayoutProps> = ({
           <button
             onClick={onYouTubeUrlSubmit}
             disabled={!youtubeUrl.trim() || isFetchingCaptions}
-            className="bg-blue-600 hover:bg-blue-500 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-teal-600 hover:bg-teal-500 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ minHeight: '44px', minWidth: '44px' }}
           >
             {isFetchingCaptions ? (
@@ -110,10 +110,10 @@ export const MobileHomeLayout: React.FC<MobileHomeLayoutProps> = ({
           <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-3xl flex flex-col items-center justify-center p-8 text-center">
             <div className="relative mb-6">
               <div className="w-24 h-24 border-4 border-blue-400/10 border-t-blue-500 rounded-full animate-spin"></div>
-              <BrainCircuit className="absolute inset-0 m-auto w-10 h-10 text-blue-400 animate-pulse" />
+              <BrainCircuit className="absolute inset-0 m-auto w-10 h-10 text-teal-400 animate-pulse" />
             </div>
             <h2 className="text-lg font-black mb-2 tracking-tight">AI 智能处理中...</h2>
-            <p className="text-blue-100/70 text-xs font-medium">
+            <p className="text-teal-100/70 text-xs font-medium">
               {isFetchingCaptions
                 ? '正在获取 YouTube 字幕...'
                 : isImporting
@@ -130,7 +130,7 @@ export const MobileHomeLayout: React.FC<MobileHomeLayoutProps> = ({
               <p className="text-white text-lg font-black leading-tight tracking-tight drop-shadow-xl">
                 {activeLine?.text || '准备开始跟读'}
               </p>
-              <p className="text-blue-400/80 text-xs font-bold mt-1 uppercase tracking-[0.2em]">
+              <p className="text-teal-400/80 text-xs font-bold mt-1 uppercase tracking-[0.2em]">
                 {activeLine?.translation}
               </p>
             </div>
@@ -146,7 +146,7 @@ export const MobileHomeLayout: React.FC<MobileHomeLayoutProps> = ({
             title={showOverlaySubtitle ? '隐藏字幕' : '显示字幕'}
           >
             {showOverlaySubtitle ? (
-              <Type className="w-4 h-4 text-blue-400" />
+              <Type className="w-4 h-4 text-teal-400" />
             ) : (
               <EyeOff className="w-4 h-4 text-slate-400" />
             )}
@@ -157,7 +157,7 @@ export const MobileHomeLayout: React.FC<MobileHomeLayoutProps> = ({
       {/* AI 发音谱子 */}
       <div className="bg-white/5 border-b border-white/5 p-6">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-blue-600 rounded-xl">
+          <div className="p-2 bg-teal-600 rounded-xl">
             <BrainCircuit className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -209,7 +209,7 @@ export const MobileHomeLayout: React.FC<MobileHomeLayoutProps> = ({
               touch-manipulation
               ${
                 activeId === line.id
-                  ? 'bg-blue-600 border-blue-500 text-white shadow-xl'
+                  ? 'bg-teal-600 border-teal-500 text-white shadow-xl'
                   : 'bg-white/5 border-transparent hover:bg-white/10'
               }
             `}
@@ -238,7 +238,7 @@ export const MobileHomeLayout: React.FC<MobileHomeLayoutProps> = ({
 
         {/* 录音按钮 */}
         <button className="w-full p-6 rounded-2xl bg-slate-900 hover:bg-black transition-all flex flex-col items-center gap-2 group shadow-xl border border-white/5">
-          <div className="p-3 rounded-full bg-blue-600 group-hover:scale-110 transition-transform shadow-lg shadow-blue-600/30">
+          <div className="p-3 rounded-full bg-teal-600 group-hover:scale-110 transition-transform shadow-lg shadow-blue-600/30">
             <Mic className="w-5 h-5 text-white" />
           </div>
           <span className="text-[10px] font-black uppercase tracking-[0.15em]">

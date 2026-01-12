@@ -3,24 +3,38 @@
 @tailwind utilities;
 
 /* ========================================
-   方案A：清新活力配色系统
+   Accessibility: Reduced Motion Support
+   ======================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ========================================
+   教育学习 Teal 主题配色系统
    ======================================== */
 
 :root {
-  /* 主色 - 蓝色 */
-  --color-primary: #3B82F6;
-  --color-primary-light: #60A5FA;
-  --color-primary-dark: #2563EB;
+  /* 主色 - Teal 青绿色（教育/成长） */
+  --color-primary: #0D9488;
+  --color-primary-light: #2DD4BF;
+  --color-primary-dark: #0F766E;
 
-  /* 强调色 - 绿色 */
-  --color-accent: #10B981;
-  --color-accent-light: #34D399;
-  --color-accent-dark: #059669;
+  /* 强调色 - Cyan 青色 */
+  --color-accent: #14B8A6;
+  --color-accent-light: #2DD4BF;
+  --color-accent-dark: #0F766E;
 
-  /* 警告色 - 黄色 */
-  --color-warning: #F59E0B;
-  --color-warning-light: #FBBF24;
-  --color-warning-dark: #D97706;
+  /* CTA 色 - 橙色 */
+  --color-warning: #EA580C;
+  --color-warning-light: #FB923C;
+  --color-warning-dark: #C2410C;
 
   /* 信息色 - 灰色 */
   --color-info: #6366F6;
@@ -29,13 +43,13 @@
 
   /* 背景色 - 浅色模式 */
   --color-bg: #FFFFFF;
-  --color-bg-secondary: #F8FAFC;
-  --color-bg-muted: #F1F5F9;
+  --color-bg-secondary: #F0FDFA;      /* Teal 极浅背景 */
+  --color-bg-muted: #CCFBF1;          /* Teal 浅背景 */
 
   /* 表面色 - 浅色模式 */
-  --color-surface: #F8FAFC;
-  --color-surface-hover: #F1F5F9;
-  --color-surface-active: #E2E8F0;
+  --color-surface: #F0FDFA;           /* Teal 卡片背景 */
+  --color-surface-hover: #CCFBF1;
+  --color-surface-active: #99F6E4;
 
   /* 文字色 - 浅色模式 */
   --color-text-primary: #0F172A;
@@ -56,20 +70,20 @@
    ======================================== */
 
 .dark {
-  /* 主色 - 蓝色（深色模式下稍微降低饱和度） */
-  --color-primary: #60A5FA;
-  --color-primary-light: #3B82F6;
-  --color-primary-dark: #2563EB;
+  /* 主色 - Teal（深色模式稍微提亮） */
+  --color-primary: #2DD4BF;
+  --color-primary-light: #5EEAD4;
+  --color-primary-dark: #14B8A6;
 
-  /* 强调色 - 绿色 */
-  --color-accent: #34D399;
-  --color-accent-light: #10B981;
-  --color-accent-dark: #059669;
+  /* 强调色 - Cyan */
+  --color-accent: #2DD4BF;
+  --color-accent-light: #5EEAD4;
+  --color-accent-dark: #14B8A6;
 
-  /* 警告色 - 黄色（深色模式下更亮） */
-  --color-warning: #FBBF24;
-  --color-warning-light: #F59E0B;
-  --color-warning-dark: #D97706;
+  /* CTA 色 - 橙色（深色模式更亮） */
+  --color-warning: #FB923C;
+  --color-warning-light: #FDBA74;
+  --color-warning-dark: #EA580C;
 
   /* 背景色 - 深色模式 */
   --color-bg: #0F172A;        /* 深蓝黑（不是纯黑） */

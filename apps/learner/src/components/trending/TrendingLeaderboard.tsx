@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-6: Trending / Hot Content Leaderboard
  * Shows most popular content based on views and engagement
  */
@@ -205,7 +205,7 @@ export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
 
                 {/* Action */}
                 <button
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all active:scale-95 text-sm flex-shrink-0"
+                  className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg transition-all active:scale-95 text-sm flex-shrink-0"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleSelectVideo(item);

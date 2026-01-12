@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-1: Daily Check-in System - Streak Counter Component
  * Displays consecutive practice days with fire animation
  */
@@ -93,7 +93,7 @@ export const StreakCounter: React.FC<StreakCounterProps> = ({ userId, onCheckin 
               className={`w-12 h-12 ${
                 currentStreak > 0
                   ? currentStreak >= 30
-                    ? 'text-purple-600 dark:text-purple-500'
+                    ? 'text-cyan-600 dark:text-purple-500'
                     : currentStreak >= 7
                     ? 'text-orange-600 dark:text-orange-500'
                     : 'text-yellow-600 dark:text-yellow-500'

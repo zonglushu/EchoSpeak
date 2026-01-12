@@ -4,31 +4,31 @@ const themeExtend: Config['theme'] = {
   darkMode: 'class',
   extend: {
     colors: {
-      // 方案A：清新活力配色
+      // 方案：教育学习 Teal 主题配色
       primary: {
-        DEFAULT: '#3B82F6',    // 主蓝色
-        light: '#60A5FA',      // 浅蓝色
-        dark: '#2563EB',       // 深蓝色
-        50: '#EFF6FF',        // 极浅蓝
-        100: '#DBEAFE',
-        200: '#BFDBFE',
-        300: '#93C5FD',
-        400: '#60A5FA',
-        500: '#3B82F6',
-        600: '#2563EB',
-        700: '#1D4ED8',
-        800: '#1E40AF',
-        900: '#1E3A8A',
+        DEFAULT: '#0D9488',    // 主 Teal 色（教育/成长）
+        light: '#2DD4BF',      // 浅 Cyan 色
+        dark: '#0F766E',       // 深 Teal 色
+        50: '#F0FDFA',        // 极浅 Teal
+        100: '#CCFBF1',
+        200: '#99F6E4',
+        300: '#5EEAD4',
+        400: '#2DD4BF',
+        500: '#14B8A6',
+        600: '#0D9488',
+        700: '#0F766E',
+        800: '#115E59',
+        900: '#134E4A',
       },
       accent: {
-        DEFAULT: '#10B981',    // 强调绿
-        light: '#34D399',      // 浅绿色
-        dark: '#059669',       // 深绿色
+        DEFAULT: '#14B8A6',    // 强调 Cyan
+        light: '#2DD4BF',      // 浅 Cyan 色
+        dark: '#0F766E',       // 深 Teal 色
       },
       warning: {
-        DEFAULT: '#F59E0B',    // 警告黄
-        light: '#FBBF24',
-        dark: '#D97706',
+        DEFAULT: '#EA580C',    // CTA 橙色（教育配色）
+        light: '#FB923C',
+        dark: '#C2410C',
       },
       info: {
         DEFAULT: '#6366F6',    // 信息灰
@@ -39,15 +39,15 @@ const themeExtend: Config['theme'] = {
       // 背景色
       background: {
         DEFAULT: '#FFFFFF',    // 白色背景
-        secondary: '#F8FAFC',  // 浅灰背景
-        muted: '#F1F5F9',      // 更深的浅灰
+        secondary: '#F0FDFA',  // Teal 极浅背景
+        muted: '#CCFBF1',      // Teal 浅背景
       },
 
       // 表面色
       surface: {
-        DEFAULT: '#F8FAFC',    // 卡片背景
-        hover: '#F1F5F9',      // 悬停状态
-        active: '#E2E8F0',     // 激活状态
+        DEFAULT: '#F0FDFA',    // Teal 卡片背景
+        hover: '#CCFBF1',      // Teal 悬停状态
+        active: '#99F6E4',     // Teal 激活状态
       },
 
       // 文字色

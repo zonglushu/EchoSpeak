@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { useAuth } from '../components/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { StreakCounter, CheckinCalendar } from '../components/checkin';
@@ -29,7 +29,7 @@ export const DashboardPage: React.FC = () => {
           <p className="text-gray-700 dark:text-gray-300 mb-4 text-lg">请登录以查看学习面板</p>
           <button
             onClick={() => navigate('/profile')}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
             立即登录
           </button>
@@ -42,7 +42,7 @@ export const DashboardPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">加载中...</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                <BarChart3 className="w-6 h-6 text-blue-600 dark:text-blue-500" />
+                <BarChart3 className="w-6 h-6 text-teal-600 dark:text-blue-500" />
                 学习概览
               </h1>
             </div>
@@ -110,7 +110,7 @@ export const DashboardPage: React.FC = () => {
         {/* 核心数据概览 - 优化版 */}
         <section className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-lg">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <Target className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+            <Target className="w-5 h-5 text-teal-600 dark:text-blue-500" />
             学习成果总览
           </h2>
           <div className="grid grid-cols-3 gap-4">
@@ -158,7 +158,7 @@ export const DashboardPage: React.FC = () => {
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-500"
+                className="h-full bg-gradient-to-r from-teal-600 to-cyan-500 transition-all duration-500"
                 style={{
                   width: `${Math.min(((userStats?.total_xp || 0) % 1000) / 10, 100)}%`
                 }}
@@ -213,8 +213,8 @@ export const DashboardPage: React.FC = () => {
               className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors group"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+                <div className="p-2 bg-teal-100 dark:bg-teal-900/30 rounded-lg">
+                  <BarChart3 className="w-5 h-5 text-teal-600 dark:text-blue-500" />
                 </div>
                 <div className="text-left">
                   <div className="font-semibold text-gray-900 dark:text-white">通知设置</div>

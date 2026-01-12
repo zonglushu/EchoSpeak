@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Search, Filter, Star, Bookmark, ChevronRight, Trash2, Edit } from 'lucide-react';
 
 interface FavoriteItem {
@@ -64,7 +64,7 @@ export const FavoritesPage: React.FC = () => {
             <h1 className="text-2xl font-black text-gray-900 dark:text-white">我的收藏</h1>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{favorites.length} 个收藏项</p>
           </div>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-blue-600 to-purple-600 text-white rounded-xl text-xs font-bold hover:shadow-lg transition-all active:scale-95">
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-br from-teal-600 to-cyan-500 text-white rounded-xl text-xs font-bold hover:shadow-lg transition-all active:scale-95">
             <Filter className="w-4 h-4" />
             筛选
           </button>
@@ -94,7 +94,7 @@ export const FavoritesPage: React.FC = () => {
               key={item.key}
               onClick={() => setFilter(item.key as any)}
               className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all ${filter === item.key
-                  ? 'bg-blue-600 text-white shadow-lg'
+                  ? 'bg-teal-600 text-white shadow-lg'
                   : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700'
                 }`}
             >
@@ -160,7 +160,7 @@ export const FavoritesPage: React.FC = () => {
 
               {/* 操作按钮 - 优化版 */}
               <div className="relative flex items-center gap-2">
-                <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-br from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold transition-all active:scale-95 shadow-lg">
+                <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-gradient-to-br from-teal-600 to-cyan-500 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl text-xs font-bold transition-all active:scale-95 shadow-lg">
                   <ChevronRight className="w-4 h-4" />
                   继续学习
                 </button>

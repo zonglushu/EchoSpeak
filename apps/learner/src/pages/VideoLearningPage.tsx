@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { Tv, Loader2, BrainCircuit, Type, EyeOff, ArrowLeft, CheckCircle, Gauge } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TranscriptLine, PlaybackState } from '@echospeak/types';
@@ -183,7 +183,7 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
                 {activeLine?.text || '准备开始跟读'}
               </p>
               {activeLine?.translation && (
-                <p className="text-blue-300 text-sm font-bold uppercase tracking-wider">
+                <p className="text-teal-300 text-sm font-bold uppercase tracking-wider">
                   {activeLine.translation}
                 </p>
               )}
@@ -201,7 +201,7 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
               title={`播放速度: ${playbackSpeed}x`}
             >
               <div className="flex items-center gap-1.5">
-                <Gauge className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <Gauge className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                 <span className="text-xs font-bold text-gray-900 dark:text-white">{playbackSpeed}x</span>
               </div>
             </button>
@@ -210,7 +210,7 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
             <button
               onClick={onToggleSubtitle}
               className={`p-3 backdrop-blur-xl border rounded-xl transition-all shadow-xl touch-friendly ${showOverlaySubtitle
-                ? 'bg-blue-600 border-blue-500 hover:bg-blue-500'
+                ? 'bg-teal-600 border-teal-500 hover:bg-teal-500'
                 : 'bg-white/90 dark:bg-gray-900/90 border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800'
                 }`}
               title={showOverlaySubtitle ? '隐藏字幕' : '显示字幕'}
@@ -291,7 +291,7 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
               className={`
                 relative overflow-hidden p-4 rounded-2xl cursor-pointer transition-all border-2 active:scale-[0.98] touch-manipulation
                 ${isActive
-                  ? 'bg-gradient-to-br from-blue-600 to-purple-600 border-blue-500 text-white shadow-xl scale-[1.02]'
+                  ? 'bg-gradient-to-br from-teal-600 to-cyan-500 border-teal-500 text-white shadow-xl scale-[1.02]'
                   : isPracticed
                     ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800 hover:shadow-lg'
                     : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 hover:shadow-md'
@@ -320,14 +320,14 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
                     }`}>
                     {line.text}
                   </p>
-                  <p className={`text-xs font-medium italic ${isActive ? 'text-blue-100' : isPracticed ? 'text-green-700 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'
+                  <p className={`text-xs font-medium italic ${isActive ? 'text-teal-100' : isPracticed ? 'text-green-700 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'
                     }`}>
                     {line.translation}
                   </p>
                 </div>
                 {line.notation && (
                   <div className="flex-shrink-0">
-                    <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-blue-500 dark:bg-blue-400'
+                    <div className={`w-2 h-2 rounded-full ${isActive ? 'bg-white' : 'bg-teal-500 dark:bg-blue-400'
                       }`} />
                   </div>
                 )}

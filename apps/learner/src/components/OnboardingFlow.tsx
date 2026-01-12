@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, ChevronRight, ChevronLeft } from 'lucide-react';
 
 interface OnboardingFlowProps {
@@ -166,8 +166,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
               onClick={() => setSelectedLevel('intermediate')}
               className={`w-full p-4 rounded-xl border-2 transition-all ${
                 selectedLevel === 'intermediate'
-                  ? 'bg-blue-50 border-blue-500 dark:bg-blue-900/20'
-                  : 'bg-surface border-border hover:border-blue-300 dark:bg-dark-surface dark:border-dark-border'
+                  ? 'bg-teal-50 border-teal-500 dark:bg-teal-900/20'
+                  : 'bg-surface border-border hover:border-teal-300 dark:bg-dark-surface dark:border-dark-border'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -177,7 +177,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                   <p className="text-xs text-text-secondary dark:text-dark-text-secondary">我能基本交流，想更流利</p>
                 </div>
                 {selectedLevel === 'intermediate' && (
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full" />
                   </div>
                 )}
@@ -187,8 +187,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
               onClick={() => setSelectedLevel('advanced')}
               className={`w-full p-4 rounded-xl border-2 transition-all ${
                 selectedLevel === 'advanced'
-                  ? 'bg-purple-50 border-purple-500 dark:bg-purple-900/20'
-                  : 'bg-surface border-border hover:border-purple-300 dark:bg-dark-surface dark:border-dark-border'
+                  ? 'bg-cyan-50 border-purple-500 dark:bg-purple-900/20'
+                  : 'bg-surface border-border hover:border-cyan-300 dark:bg-dark-surface dark:border-dark-border'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -198,16 +198,16 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
                   <p className="text-xs text-text-secondary dark:text-dark-text-secondary">我很流利，想练地道发音</p>
                 </div>
                 {selectedLevel === 'advanced' && (
-                  <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full" />
                   </div>
                 )}
               </div>
             </button>
           </div>
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 border border-blue-200 dark:border-blue-800">
-            <p className="text-xs font-bold text-blue-700 dark:text-blue-300 mb-1">💡 提示</p>
-            <p className="text-xs text-blue-600 dark:text-blue-400">
+          <div className="bg-teal-50 dark:bg-teal-900/20 rounded-xl p-3 border border-teal-200 dark:border-teal-800">
+            <p className="text-xs font-bold text-teal-700 dark:text-teal-300 mb-1">💡 提示</p>
+            <p className="text-xs text-teal-600 dark:text-teal-400">
               之后可以在「帮助中心」随时查看这些引导内容
             </p>
           </div>

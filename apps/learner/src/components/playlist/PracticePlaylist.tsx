@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-3: Practice Playlist / Favorites System
  * Manages user's practice queue with drag-and-drop reordering
  */
@@ -123,7 +123,7 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
           </div>
         </div>
         <button
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all active:scale-95 flex items-center gap-2"
+          className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-all active:scale-95 flex items-center gap-2"
           onClick={() => {
             // Open video selection modal (to be implemented)
             console.log('添加到清单');
@@ -148,7 +148,7 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
               添加视频，稍后练习
             </div>
             <button
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all active:scale-95"
+              className="px-6 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-all active:scale-95"
               onClick={() => {
                 console.log('浏览视频');
               }}
@@ -226,7 +226,7 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => onStartPractice?.(item.asset_id || item.video_id || item.id)}
-                    className="p-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all active:scale-95"
+                    className="p-2 bg-teal-600 hover:bg-teal-500 text-white rounded-lg transition-all active:scale-95"
                     title="开始练习"
                   >
                     <Play className="w-4 h-4" />

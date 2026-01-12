@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { WifiOff, Loader2 } from 'lucide-react';
 
 /**
@@ -54,7 +54,7 @@ export function OfflineIndicator() {
       {!isOnline && showReconnecting && (
         <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:max-w-sm z-50 bg-white rounded-lg shadow-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3">
-            <Loader2 className="animate-spin text-blue-600" size={20} />
+            <Loader2 className="animate-spin text-teal-600" size={20} />
             <div>
               <p className="font-semibold text-gray-900">正在重连...</p>
               <p className="text-sm text-gray-600">网络恢复后将自动同步您的数据</p>

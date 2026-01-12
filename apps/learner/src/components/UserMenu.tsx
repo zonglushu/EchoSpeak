@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 
 /**
@@ -38,8 +38,8 @@ export function UserMenu() {
   const userTier = user?.user_metadata?.tier || 'free';
   const tierColors = {
     free: 'bg-gray-100 text-gray-800',
-    pro: 'bg-blue-100 text-blue-800',
-    premium: 'bg-purple-100 text-purple-800',
+    pro: 'bg-teal-100 text-teal-800',
+    premium: 'bg-cyan-100 text-cyan-800',
   };
 
   return (

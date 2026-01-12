@@ -1,4 +1,4 @@
-import { useQuota } from '../hooks/useQuota';
+﻿import { useQuota } from '../hooks/useQuota';
 import { Sparkles } from 'lucide-react';
 
 /**
@@ -39,13 +39,13 @@ export function QuotaDisplay() {
     },
     pro: {
       name: '💎 专业版',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      color: 'text-teal-600',
+      bgColor: 'bg-teal-50',
     },
     premium: {
       name: '👑 高级版',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      color: 'text-cyan-600',
+      bgColor: 'bg-cyan-50',
     },
   };
 

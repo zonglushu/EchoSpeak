@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { CheckCircle, Target } from 'lucide-react';
 
 interface DailyGoal {
@@ -32,14 +32,14 @@ export const DailyGoals: React.FC<DailyGoalsProps> = ({ goals, onGoalToggle }) =
                     </div>
                 </div>
                 <div className="text-right">
-                    <p className="text-2xl font-black text-blue-600 dark:text-blue-500">{Math.round(progress)}%</p>
+                    <p className="text-2xl font-black text-teal-600 dark:text-blue-500">{Math.round(progress)}%</p>
                 </div>
             </div>
 
             {/* 进度条 */}
             <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 mb-4 overflow-hidden">
                 <div
-                    className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-500 ease-out"
+                    className="h-full bg-gradient-to-r from-teal-600 to-cyan-500 transition-all duration-500 ease-out"
                     style={{ width: `${progress}%` }}
                 />
             </div>

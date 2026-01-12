@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Check, X, Star, Zap, Download, HeadphonesIcon, Crown, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -66,8 +66,8 @@ const TIERS: Tier[] = [
       adFree: true,
       support: '邮件支持',
     },
-    color: 'text-blue-600',
-    gradient: 'from-blue-500 to-blue-600',
+    color: 'text-teal-600',
+    gradient: 'from-teal-500 to-teal-600',
     badge: '推荐',
   },
   {
@@ -88,8 +88,8 @@ const TIERS: Tier[] = [
       adFree: true,
       support: '专属客服',
     },
-    color: 'text-purple-600',
-    gradient: 'from-purple-500 to-purple-600',
+    color: 'text-cyan-600',
+    gradient: 'from-cyan-500 to-cyan-600',
     badge: '超值',
   },
 ];
@@ -227,7 +227,7 @@ export const SubscriptionPage: React.FC = () => {
                     isCurrentTier
                       ? 'border-primary shadow-lg scale-105'
                       : tier.id === 'pro'
-                      ? 'border-blue-300 dark:border-blue-700'
+                      ? 'border-teal-300 dark:border-teal-700'
                       : 'border-border hover:border-primary/50 dark:border-dark-border'
                   }`}
                 >

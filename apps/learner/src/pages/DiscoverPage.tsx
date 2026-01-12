@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Search, TrendingUp, Play, Clock, BookMark, Star } from 'lucide-react';
 
 interface DiscoverPageProps {
@@ -34,8 +34,8 @@ const recommendedVideos = [
 ];
 
 const categories = [
-  { id: 'news', name: '新闻', icon: '📰', count: 15, color: 'bg-blue-500' },
-  { id: 'movies', name: '电影', icon: '🎬', count: 23, color: 'bg-purple-500' },
+  { id: 'news', name: '新闻', icon: '📰', count: 15, color: 'bg-teal-500' },
+  { id: 'movies', name: '电影', icon: '🎬', count: 23, color: 'bg-cyan-500' },
   { id: 'talks', name: '访谈', icon: '🎙️', count: 18, color: 'bg-green-500' },
   { id: 'documentaries', name: '纪录片', icon: '📺', count: 12, color: 'bg-orange-500' },
   { id: 'comedy', name: '喜剧', icon: '😂', count: 9, color: 'bg-pink-500' },

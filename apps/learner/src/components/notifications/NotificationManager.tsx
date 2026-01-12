@@ -1,4 +1,4 @@
-/**
+﻿/**
  * P0-5: Notification & Reminder System
  * Manages Web Push API notifications for daily practice reminders
  */
@@ -108,7 +108,7 @@ export const NotificationManager: React.FC<NotificationManagerProps> = ({ userId
               {canRequestPermission && (
                 <button
                   onClick={handleRequestPermission}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-all active:scale-95 text-sm"
+                  className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg transition-all active:scale-95 text-sm"
                 >
                   开启通知
                 </button>
@@ -137,7 +137,7 @@ export const NotificationManager: React.FC<NotificationManagerProps> = ({ userId
           {/* Toggle Reminder */}
           <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3">
-              <Clock className="w-5 h-5 text-blue-600 dark:text-blue-500" />
+              <Clock className="w-5 h-5 text-teal-600 dark:text-blue-500" />
               <div>
                 <div className="text-sm font-medium text-gray-900 dark:text-white">每日提醒</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400">

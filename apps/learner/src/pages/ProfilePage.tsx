@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Clock, CheckCircle, Trophy, ChevronRight, Bell, HelpCircle, LogOut, Sparkles, ChevronDown, Bug, BarChart3, Target } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { Clock, CheckCircle, Trophy, ChevronRight, Bell, HelpCircle, LogOut, Sparkles, ChevronDown, Bug, Target, TrendingUp, Calendar, Award, Settings } from 'lucide-react';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../components/AuthProvider';
-import { StreakCounter, CheckinCalendar } from '../components/checkin';
+import { StreakCounter } from '../components/checkin';
+import { CheckinCalendarV2 } from '../components/checkin/CheckinCalendarV2';
 import { getUserStats, formatDuration, getUserAchievements, getPracticeHistory } from '../services/p0FeaturesClient';
 import { UserStats, UserAchievement } from '@echospeak/types';
 
@@ -50,7 +51,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
           <p className="mt-4 text-gray-600 dark:text-gray-400">加载中...</p>
         </div>
       </div>
@@ -59,99 +60,99 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
 
   const userTier = user?.user_metadata?.tier || 'free';
   const tierColors = {
-    free: 'bg-gray-100 text-gray-800',
-    pro: 'bg-blue-100 text-blue-800',
-    premium: 'bg-purple-100 text-purple-800',
+    free: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+    pro: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+    premium: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
   };
 
   const tierLabels = {
-    free: '🔰 免费版',
-    pro: '💎 专业版',
-    premium: '👑 高级版',
+    free: '免费版',
+    pro: '专业版',
+    premium: '高级版',
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 pb-24">
-      {/* 顶部区域容器 */}
-      <div className="relative pb-48">{/* 增加到 pb-48，给统计卡片足够空间（卡片高度约160px + 向下偏移64px = 224px，pb-48=192px接近） */}
-        {/* 顶部渐变背景 */}
-        <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 pt-8 pb-24 px-4">
-          {/* 装饰元素 */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-teal-50/30 dark:bg-gray-950 pb-24">
+      {/* 顶部用户卡片 - 使用 Glassmorphism 设计 */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500 px-4 pt-8 pb-6">
+        {/* 装饰性背景圆形 */}
+        <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+        <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-cyan-400/20 blur-2xl"></div>
 
-          {/* 用户信息卡片 */}
-          <div className="relative max-w-md mx-auto">
-            <div className="flex items-center gap-4">
-              {/* 用户头像 */}
-              <div className="relative flex-shrink-0">
-                <div className="w-20 h-20 bg-gradient-to-br from-white/30 to-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-2xl border-4 border-white/30">
-                  {(user?.email?.split('@')[0] || 'L')[0].toUpperCase()}
-                </div>
-                {/* 在线状态指示器 */}
-                <div className="absolute bottom-0 right-0 w-5 h-5 bg-green-500 rounded-full border-4 border-white dark:border-gray-900" />
+        <div className="relative mx-auto max-w-md space-y-5">
+          {/* 用户信息区 */}
+          <div className="flex items-center gap-4">
+            {/* 头像 */}
+            <div className="relative">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-white/40 bg-white/20 text-xl font-bold text-white backdrop-blur-sm transition-transform duration-200 hover:scale-105">
+                {(user?.email?.split('@')[0] || 'L')[0].toUpperCase()}
               </div>
+              {/* 在线状态 */}
+              <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-white bg-green-500"></div>
+            </div>
 
-              {/* 用户信息 */}
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl font-black text-white mb-1 truncate">
-                  {user?.email?.split('@')[0] || '学习者'}
-                </h1>
-                <p className="text-sm text-white/80 mb-2 truncate">
-                  {user?.email}
-                </p>
-                <span className={`inline-block px-3 py-1 ${tierColors[userTier as keyof typeof tierColors]} rounded-full text-xs font-bold`}>
+            {/* 用户名和等级 */}
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl font-bold text-white mb-1.5 truncate">
+                {user?.email?.split('@')[0] || '学习者'}
+              </h1>
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${tierColors[userTier as keyof typeof tierColors]}`}>
+                  {userTier === 'premium' && <Award className="h-3 w-3" />}
+                  {userTier === 'pro' && <Sparkles className="h-3 w-3" />}
                   {tierLabels[userTier as keyof typeof tierLabels]}
                 </span>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* 统计卡片 - 使用绝对定位浮动 */}
-        <div className="absolute -bottom-16 left-0 right-0 px-4">{/* 改为 -bottom-16，让卡片浮动一半 */}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 shadow-2xl border border-gray-200 dark:border-gray-800">
-            <div className="grid grid-cols-3 gap-4">
+          {/* 统计数据卡片 - Glassmorphism */}
+          <div className="rounded-2xl border border-white/20 bg-white/90 p-5 shadow-xl backdrop-blur-md dark:bg-gray-900/90">
+            {/* 三栏数据 */}
+            <div className="grid grid-cols-3 gap-4 mb-5">
               <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Clock className="w-6 h-6 text-blue-600 dark:text-blue-500" />
+                <div className="mb-2 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 transition-transform duration-200 hover:scale-110 cursor-pointer">
+                  <Clock className="h-5 w-5 text-white" />
                 </div>
-                <p className="text-xl font-black text-gray-900 dark:text-white">
+                <p className="text-2xl font-black text-gray-900 dark:text-white">
                   {userStats ? formatDuration(userStats.total_practice_seconds) : '0m'}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">总时长</p>
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400">总时长</p>
               </div>
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-500" />
+              <div className="text-center border-x border-gray-200 dark:border-gray-700">
+                <div className="mb-2 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 transition-transform duration-200 hover:scale-110 cursor-pointer">
+                  <CheckCircle className="h-5 w-5 text-white" />
                 </div>
-                <p className="text-xl font-black text-gray-900 dark:text-white">
+                <p className="text-2xl font-black text-gray-900 dark:text-white">
                   {userStats?.total_videos_completed || 0}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">完成视频</p>
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400">完成视频</p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center mx-auto mb-2">
-                  <Trophy className="w-6 h-6 text-purple-600 dark:text-purple-500" />
+                <div className="mb-2 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 transition-transform duration-200 hover:scale-110 cursor-pointer">
+                  <Trophy className="h-5 w-5 text-white" />
                 </div>
-                <p className="text-xl font-black text-gray-900 dark:text-white">
+                <p className="text-2xl font-black text-gray-900 dark:text-white">
                   {userStats?.total_sentences_practiced || 0}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">练习句子</p>
+                <p className="text-xs font-medium text-gray-600 dark:text-gray-400">练习句子</p>
               </div>
             </div>
 
             {/* 等级进度条 */}
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-800">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-gray-600 dark:text-gray-400">当前等级</span>
-                <span className="font-bold text-gray-900 dark:text-white">
-                  Lv.{userStats?.level || 1} · {userStats?.total_xp || 0} XP
+            <div className="space-y-2 border-t border-gray-200 dark:border-gray-700 pt-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-semibold text-gray-700 dark:text-gray-300">
+                  Lv.{userStats?.level || 1}
+                </span>
+                <span className="flex items-center gap-1 font-bold text-teal-600 dark:text-teal-400">
+                  <TrendingUp className="h-4 w-4" />
+                  {userStats?.total_xp || 0} XP
                 </span>
               </div>
-              <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-3 overflow-hidden">
+              <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-500"
+                  className="h-full rounded-full bg-gradient-to-r from-teal-500 to-cyan-500 transition-all duration-500 ease-out"
                   style={{
                     width: `${Math.min(((userStats?.total_xp || 0) % 1000) / 10, 100)}%`
                   }}
@@ -162,110 +163,97 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
         </div>
       </div>
 
-      <div className="px-4 space-y-6 mt-4">{/* 减少 mt 到 4，因为外层容器已经有足够的 pb */}
-        {/* P0-1: 打卡组件（完整版） */}
+      {/* 主内容区域 */}
+      <div className="mx-auto max-w-md space-y-5 px-4 pt-5">
+        {/* 打卡连击 */}
         <section>
           <StreakCounter userId={userId} />
         </section>
 
         {/* 练习日历 */}
         <section>
-          <CheckinCalendar userId={userId} useDemoData={process.env.NODE_ENV === 'development'} />
+          <CheckinCalendarV2 userId={userId} useDemoData={process.env.NODE_ENV === 'development'} />
         </section>
 
         {/* 学习历史 */}
-        <section>
-          <button
-            onClick={() => setShowHistory(!showHistory)}
-            className="w-full flex items-center justify-between mb-3"
-          >
-            <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-wider">
-              学习历史
-            </h3>
-            <ChevronDown
-              className={`w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform ${showHistory ? 'rotate-180' : ''
+        {practiceHistory.length > 0 && (
+          <section>
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="group mb-3 flex w-full items-center justify-between transition-colors hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer"
+            >
+              <h3 className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white">
+                <Calendar className="h-4 w-4" />
+                最近练习
+              </h3>
+              <ChevronDown
+                className={`h-5 w-5 text-gray-500 transition-transform duration-200 dark:text-gray-400 ${
+                  showHistory ? 'rotate-180' : ''
                 }`}
-            />
-          </button>
+              />
+            </button>
 
-          {showHistory && (
-            <div className="space-y-4">
-              {practiceHistory.length > 0 ? (
-                practiceHistory.map((history) => (
+            {showHistory && (
+              <div className="space-y-2.5">
+                {practiceHistory.slice(0, 5).map((history) => (
                   <div
                     key={history.id}
-                    className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800"
+                    onClick={() => navigate(`/video/${history.video_id}`)}
+                    className="group cursor-pointer rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm transition-all duration-200 hover:border-teal-300 hover:shadow-md dark:border-gray-800 dark:bg-gray-900 dark:hover:border-teal-700"
                   >
-                    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors cursor-pointer"
-                      onClick={() => navigate(`/video/${history.video_id}`)}
-                    >
-                      <div className="w-12 h-12 rounded bg-gradient-to-br from-blue-100 to-purple-100 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center text-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-teal-100 to-cyan-100 text-2xl transition-transform duration-200 group-hover:scale-110 dark:from-teal-900/30 dark:to-cyan-900/30">
                         🎬
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-gray-900 group-hover:text-teal-600 dark:text-white dark:group-hover:text-teal-400">
                           {history.video_title}
                         </p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {formatDuration(history.duration_seconds)} · {history.sentences_completed}/{history.sentences_total} 句
                         </p>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <CheckCircle className="w-4 h-4 text-green-500" />
-                        <span className="text-xs text-green-600 dark:text-green-400">
+                      <div className="flex-shrink-0 text-right">
+                        <div className="text-sm font-bold text-green-600 dark:text-green-400">
                           {Math.round(history.progress_percentage)}%
-                        </span>
+                        </div>
+                        <CheckCircle className="ml-auto h-4 w-4 text-green-500" />
                       </div>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800">
-                  <Clock className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
-                  <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">
-                    还没有学习记录
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500">
-                    开始第一次练习吧！
-                  </p>
-                </div>
-              )}
-            </div>
-          )}
-        </section>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* 成就徽章 */}
         {achievements.length > 0 && (
           <section>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-wider">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white">
+                <Award className="h-4 w-4" />
                 成就徽章
               </h3>
-              <span className="text-xs text-gray-600 dark:text-gray-400">
-                {achievements.length} 已解锁
+              <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                {achievements.length} 枚
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {achievements.map((userAchievement) => {
+            <div className="grid grid-cols-3 gap-2.5">
+              {achievements.slice(0, 6).map((userAchievement) => {
                 const achievement = userAchievement.achievement;
                 if (!achievement) return null;
 
                 return (
                   <div
                     key={userAchievement.id}
-                    className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl p-4 border border-amber-200 dark:border-amber-800"
+                    className="group cursor-pointer rounded-xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 p-3 transition-all duration-200 hover:scale-105 hover:shadow-md dark:border-amber-800 dark:from-amber-900/20 dark:to-orange-900/20"
                   >
-                    <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center text-2xl mb-2 mx-auto">
+                    <div className="mb-2 text-center text-3xl transition-transform duration-200 group-hover:scale-110">
                       {achievement.icon_name}
                     </div>
-                    <h4 className="text-sm font-bold text-gray-900 dark:text-white text-center mb-1">
+                    <p className="truncate text-center text-xs font-semibold text-gray-900 dark:text-white">
                       {achievement.name}
-                    </h4>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
-                      {achievement.description}
-                    </p>
-                    <p className="text-[10px] text-amber-700 dark:text-amber-400 text-center mt-2">
-                      {new Date(userAchievement.earned_at).toLocaleDateString()}
                     </p>
                   </div>
                 );
@@ -292,16 +280,16 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
             </button>
 
             {showDevTools && (
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-4 border-2 border-purple-300 dark:border-purple-700 space-y-3">
-                <p className="text-xs font-bold text-purple-900 dark:text-purple-100">
+              <div className="bg-gradient-to-br from-cyan-50 to-teal-50 dark:from-purple-900/30 dark:to-pink-900/30 rounded-2xl p-4 border-2 border-cyan-300 dark:border-cyan-700 space-y-3">
+                <p className="text-xs font-bold text-cyan-900 dark:text-cyan-100">
                   🛠️ 开发者调试工具
                 </p>
-                <p className="text-[10px] text-purple-700 dark:text-purple-300 mb-3">
+                <p className="text-[10px] text-cyan-700 dark:text-cyan-300 mb-3">
                   查看当前用户状态和统计数据
                 </p>
 
                 <div className="p-2 bg-white/50 dark:bg-black/20 rounded-lg">
-                  <p className="text-[10px] text-purple-800 dark:text-purple-200 leading-relaxed">
+                  <p className="text-[10px] text-cyan-800 dark:text-cyan-200 leading-relaxed">
                     User ID: {userId}<br />
                     Total XP: {userStats?.total_xp || 0}<br />
                     Level: {userStats?.level || 1}<br />
@@ -315,80 +303,81 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
           </section>
         )}
 
-        {/* 设置入口 */}
+        {/* 设置菜单 */}
         <section>
-          <h3 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-wider mb-3">
+          <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white">
+            <Settings className="h-4 w-4" />
             设置
           </h3>
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 divide-y divide-gray-200 dark:divide-gray-800">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <button
               onClick={() => navigate('/subscription')}
-              className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
+              className="group flex w-full cursor-pointer items-center gap-3.5 border-b border-gray-200 p-4 transition-colors duration-200 hover:bg-teal-50 dark:border-gray-800 dark:hover:bg-teal-900/10"
             >
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-cyan-600 transition-transform duration-200 group-hover:scale-110">
+                <Sparkles className="h-5 w-5 text-white" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-bold text-gray-900 dark:text-white">会员中心</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">升级套餐、查看配额</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-teal-600 dark:text-white dark:group-hover:text-teal-400">
+                  会员中心
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">升级套餐、查看配额</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
+              <ChevronRight className="h-5 w-5 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 dark:text-gray-600" />
             </button>
-            <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-                <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+
+            <button className="group flex w-full cursor-pointer items-center gap-3.5 border-b border-gray-200 p-4 transition-colors duration-200 hover:bg-teal-50 dark:border-gray-800 dark:hover:bg-teal-900/10">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-100 transition-transform duration-200 group-hover:scale-110 dark:bg-teal-900/30">
+                <Target className="h-5 w-5 text-teal-600 dark:text-teal-400" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-bold text-gray-900 dark:text-white">学习偏好</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">每日目标、提醒设置</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-teal-600 dark:text-white dark:group-hover:text-teal-400">
+                  学习偏好
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">每日目标设置</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
+              <ChevronRight className="h-5 w-5 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 dark:text-gray-600" />
             </button>
-            <button className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all">
-              <div className="w-10 h-10 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center">
-                <Bell className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-bold text-gray-900 dark:text-white">通知设置</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">学习提醒、更新通知</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
-            </button>
+
             <button
-              className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
               onClick={() => navigate('/help')}
+              className="group flex w-full cursor-pointer items-center gap-3.5 border-b border-gray-200 p-4 transition-colors duration-200 hover:bg-green-50 dark:border-gray-800 dark:hover:bg-green-900/10"
             >
-              <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-                <HelpCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-green-100 transition-transform duration-200 group-hover:scale-110 dark:bg-green-900/30">
+                <HelpCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-bold text-gray-900 dark:text-white">帮助中心</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">使用教程、常见问题</p>
+                <p className="text-sm font-semibold text-gray-900 group-hover:text-green-600 dark:text-white dark:group-hover:text-green-400">
+                  帮助中心
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">使用教程、常见问题</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-600" />
+              <ChevronRight className="h-5 w-5 text-gray-400 transition-transform duration-200 group-hover:translate-x-1 dark:text-gray-600" />
             </button>
-            <div className="w-full flex items-center gap-4 p-4">
-              <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+
+            <div className="flex w-full items-center gap-3.5 border-b border-gray-200 p-4 dark:border-gray-800">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30">
+                <Settings className="h-5 w-5 text-amber-600 dark:text-amber-400" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-bold text-gray-900 dark:text-white">主题模式</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">切换浅色/深色</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">主题模式</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">浅色/深色</p>
               </div>
               <ThemeToggle />
             </div>
+
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center gap-4 p-4 hover:bg-red-50 dark:hover:bg-red-900/10 transition-all"
+              className="group flex w-full cursor-pointer items-center gap-3.5 p-4 transition-colors duration-200 hover:bg-red-50 dark:hover:bg-red-900/10"
             >
-              <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-xl flex items-center justify-center">
-                <LogOut className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 transition-transform duration-200 group-hover:scale-110 dark:bg-red-900/30">
+                <LogOut className="h-5 w-5 text-red-600 dark:text-red-400" />
               </div>
               <div className="flex-1 text-left">
-                <p className="text-sm font-bold text-red-600 dark:text-red-400">退出登录</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">登出当前账户</p>
+                <p className="text-sm font-semibold text-red-600 dark:text-red-400">退出登录</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">登出当前账户</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-red-600 dark:text-red-400" />
+              <ChevronRight className="h-5 w-5 text-red-400 transition-transform duration-200 group-hover:translate-x-1" />
             </button>
           </div>
         </section>

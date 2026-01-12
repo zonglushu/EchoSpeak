@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Mic, Clock, TrendingUp, Target, Play, ChevronDown, ChevronUp, Search, Bookmark, BookmarkCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toggleWatchLater, isInWatchLater } from '../utils/watchLaterUtils';
@@ -50,7 +50,7 @@ export const PracticePage: React.FC = () => {
       categoryName: '新闻',
       difficulty: 'intermediate',
       difficultyLabel: '🌿 中级',
-      difficultyColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+      difficultyColor: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
       duration: '2:45',
       sentences: 12,
       thumbnail: '🌤️',
@@ -64,7 +64,7 @@ export const PracticePage: React.FC = () => {
       categoryName: '商务',
       difficulty: 'advanced',
       difficultyLabel: '🌳 高级',
-      difficultyColor: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+      difficultyColor: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400',
       duration: '5:12',
       sentences: 18,
       thumbnail: '💼',
@@ -78,7 +78,7 @@ export const PracticePage: React.FC = () => {
       categoryName: '影视',
       difficulty: 'intermediate',
       difficultyLabel: '🌿 中级',
-      difficultyColor: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+      difficultyColor: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400',
       duration: '4:30',
       sentences: 15,
       thumbnail: '🎬',
@@ -221,9 +221,9 @@ export const PracticePage: React.FC = () => {
         {/* 可折叠的统计数据 */}
         {showStats && (
           <div className="grid grid-cols-3 gap-3 mb-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl p-3 border border-blue-200 dark:border-blue-800">
-              <p className="text-xs text-blue-700 dark:text-blue-300 mb-1">今日</p>
-              <p className="text-xl font-black text-blue-900 dark:text-blue-100">
+            <div className="bg-gradient-to-br from-teal-50 to-teal-100 dark:from-blue-900/30 dark:to-blue-800/30 rounded-xl p-3 border border-teal-200 dark:border-teal-800">
+              <p className="text-xs text-teal-700 dark:text-teal-300 mb-1">今日</p>
+              <p className="text-xl font-black text-teal-900 dark:text-teal-100">
                 {practiceStats.todayMinutes}<span className="text-sm">分</span>
               </p>
             </div>

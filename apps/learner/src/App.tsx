@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { Loader2, X, Languages } from 'lucide-react';
 import { TranscriptLine, PlaybackState, MediaAsset } from '@echospeak/types';
@@ -359,7 +359,7 @@ const AppContent: React.FC = () => {
             <button
               onClick={handleManualImport}
               disabled={isImporting}
-              className="w-full py-4 bg-blue-600 hover:bg-blue-500 rounded-2xl font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl flex items-center justify-center gap-3"
+              className="w-full py-4 bg-teal-600 hover:bg-teal-500 rounded-2xl font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl flex items-center justify-center gap-3"
             >
               {isImporting ? (
                 <>
