@@ -8,6 +8,7 @@ import { supabase } from './lib/supabase';
 import { initP0Features } from '@echospeak/services';
 import './index.css';
 import '@echospeak/ui/theme.css';
+import './i18n';
 
 // Initialize P0 Features with Supabase client
 initP0Features(supabase);

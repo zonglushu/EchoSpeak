@@ -1,10 +1,5 @@
-﻿/**
- * P0-6: Trending / Hot Content Leaderboard
- * Shows most popular content based on views and engagement
- */
-
-import React, { useEffect, useState } from 'react';
-import { TrendingUp, Eye, Users, Award, Flame } from 'lucide-react';
+﻿import React, { useEffect, useState } from 'react';
+import { TrendingUp, Eye, Flame, ThumbsUp, ChevronRight } from 'lucide-react';
 import { getTrendingContent, recordView } from '../../services/p0FeaturesClient';
 import { TrendingItem } from '@echospeak/types';
 
@@ -12,12 +7,16 @@ interface TrendingLeaderboardProps {
   userId?: string;
   onSelectVideo?: (videoId: string) => void;
   period?: 'today' | 'week' | 'month';
+  layout?: 'horizontal' | 'vertical';
+  hideHeader?: boolean;
 }
 
 export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
   userId,
   onSelectVideo,
-  period = 'week'
+  period = 'week',
+  layout = 'horizontal',
+  hideHeader = false
 }) => {
   const [trendingItems, setTrendingItems] = useState<TrendingItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -40,16 +39,17 @@ export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
   };
 
   const handleSelectVideo = async (item: TrendingItem) => {
-    const videoId = item.asset_id || item.video_id;
+    const videoId = (item.asset_id || item.video_id) as string;
     if (!videoId) return;
 
-    // Record view
     if (userId) {
       try {
-        await recordView(userId, {
-          asset_id: item.asset_id,
-          video_id: item.video_id,
-        });
+        if (item.asset_id || item.video_id) {
+          await recordView(userId, {
+            asset_id: item.asset_id as string,
+            video_id: item.video_id as string,
+          });
+        }
       } catch (error) {
         console.error('Failed to record view:', error);
       }
@@ -60,196 +60,132 @@ export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
 
   const getRankIcon = (rank: number): string => {
     switch (rank) {
-      case 1:
-        return '🥇';
-      case 2:
-        return '🥈';
-      case 3:
-        return '🥉';
-      default:
-        return `#${rank}`;
+      case 1: return '🥇';
+      case 2: return '🥈';
+      case 3: return '🥉';
+      default: return '🏅';
     }
   };
 
-  const getRankColor = (rank: number): string => {
+  const getCardBg = (rank: number): string => {
     switch (rank) {
       case 1:
-        return 'from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30 border-yellow-200 dark:border-yellow-700/50';
+        return 'bg-[#FFFBEB] dark:bg-yellow-900/10 border-[#FEF3C7] dark:border-yellow-800/50 shadow-sm';
       case 2:
-        return 'from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50 border-gray-200 dark:border-gray-600/50';
+        return 'bg-[#F0F9FF] dark:bg-blue-900/10 border-[#E0F2FE] dark:border-blue-800/50 shadow-sm';
       case 3:
-        return 'from-orange-50 to-orange-100 dark:from-orange-900/30 dark:to-orange-800/30 border-orange-200 dark:border-orange-700/50';
+        return 'bg-[#FDF2F8] dark:bg-pink-900/10 border-[#FCE7F3] dark:border-pink-800/50 shadow-sm';
       default:
-        return 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700/50';
-    }
-  };
-
-  const getPeriodLabel = (p: typeof selectedPeriod): string => {
-    switch (p) {
-      case 'today':
-        return 'Today';
-      case 'week':
-        return 'This Week';
-      case 'month':
-        return 'This Month';
+        return 'bg-white dark:bg-slate-900/50 border-gray-100 dark:border-white/5 shadow-sm';
     }
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-white/10">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-orange-500" />
-            Trending Now
-          </h3>
-          <div className="flex gap-2">
-            {(['today', 'week', 'month'] as const).map((p) => (
+    <div className="py-4">
+      {/* 顶部标题和选择器 */}
+      {!hideHeader && (
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            </div>
+            <h3 className="text-xl font-black text-[#1E293B] dark:text-white tracking-tight">
+              Trending Now
+            </h3>
+          </div>
+
+          {/* 时间切换器 - 药丸风格 */}
+          <div className="flex bg-gray-100 dark:bg-slate-800 p-1 rounded-full">
+            {(['week', 'month'] as const).map((p) => (
               <button
                 key={p}
                 onClick={() => setSelectedPeriod(p)}
-                className={`px-3 py-1 rounded-lg font-bold text-xs transition-all ${selectedPeriod === p
-                    ? 'bg-orange-600 text-white'
-                    : 'bg-gray-100 dark:bg-slate-700/50 text-gray-600 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+                className={`px-5 py-1.5 rounded-full text-sm font-bold transition-all duration-300 ${selectedPeriod === p
+                  ? 'bg-white dark:bg-slate-700 text-[#1E293B] dark:text-white shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200'
                   }`}
               >
-                {p === 'today' ? 'Today' : p === 'week' ? 'Week' : 'Month'}
+                {p === 'week' ? 'Week' : 'Month'}
               </button>
             ))}
           </div>
         </div>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Most popular content {getPeriodLabel(selectedPeriod).toLowerCase()}
-        </p>
-      </div>
+      )}
 
-      {/* Trending List */}
-      <div className="space-y-3">
+      {/* 横向滚动列表 */}
+      <div className="flex gap-4 overflow-x-auto pb-6 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
         {isLoading ? (
-          Array.from({ length: 5 }).map((_, index) => (
+          Array.from({ length: 3 }).map((_, index) => (
             <div
               key={index}
-              className="bg-gray-100 dark:bg-slate-900/50 rounded-xl p-4 border border-gray-200 dark:border-white/5 animate-pulse"
-            >
-              <div className="h-4 bg-gray-300 dark:bg-slate-700/50 rounded w-3/4 mb-2" />
-              <div className="h-3 bg-gray-300 dark:bg-slate-700/50 rounded w-1/2" />
-            </div>
+              className="flex-shrink-0 w-72 h-44 bg-gray-100 dark:bg-slate-800/50 rounded-3xl animate-pulse border border-gray-200 dark:border-white/5"
+            />
           ))
         ) : trendingItems.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="flex justify-center mb-4">
-              <div className="p-4 bg-gray-100 dark:bg-slate-700/50 rounded-full">
-                <TrendingUp className="w-8 h-8 text-gray-400 dark:text-slate-600" />
-              </div>
-            </div>
-            <div className="text-gray-500 dark:text-slate-500 mb-2">No trending content yet</div>
-            <div className="text-sm text-gray-600 dark:text-slate-600">
-              Be the first to practice and start the trend!
-            </div>
+          <div className="w-full text-center py-10 bg-gray-50 dark:bg-slate-900/30 rounded-3xl border-2 border-dashed border-gray-200 dark:border-white/10">
+            <p className="text-gray-500 dark:text-slate-500 font-bold">暂无热门内容</p>
           </div>
         ) : (
           trendingItems.map((item, index) => (
             <div
               key={item.asset_id || item.video_id || index}
-              onClick={() => handleSelectVideo(item)}
-              className={`relative rounded-xl p-4 border-2 transition-all cursor-pointer hover:scale-[1.02] hover:shadow-xl ${index < 3
-                  ? `bg-gradient-to-br ${getRankColor(index + 1)}`
-                  : getRankColor(index + 1)
-                }`}
+              className={`flex-shrink-0 w-[280px] snap-start relative rounded-[32px] p-6 border-2 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${getCardBg(index + 1)}`}
             >
-              <div className="flex items-start gap-4">
-                {/* Rank */}
-                <div className="flex items-center justify-center w-12 h-12 text-2xl font-black flex-shrink-0">
-                  {getRankIcon(index + 1)}
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-gray-900 dark:text-white mb-1 line-clamp-2">
-                    {item.video_title}
-                  </div>
-
-                  {/* Stats */}
-                  <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600 dark:text-slate-400">
-                    {/* Views */}
-                    <div className="flex items-center gap-1">
-                      <Eye className="w-3 h-3" />
-                      <span>
-                        {(() => {
-                          const viewCount = selectedPeriod === 'today'
-                            ? item.view_count_today
-                            : selectedPeriod === 'week'
-                              ? item.view_count_week
-                              : item.view_count_month;
-                          return isNaN(viewCount) || viewCount === null || viewCount === undefined ? 0 : viewCount;
-                        })()}
-                      </span>
-                    </div>
-
-                    {/* Completion Rate */}
-                    {item.completion_rate > 0 && (
-                      <div className="flex items-center gap-1">
-                        <Award className="w-3 h-3" />
-                        <span>{Math.round(item.completion_rate * 100)}% complete</span>
-                      </div>
-                    )}
-
-                    {/* Trend Score */}
-                    <div className="flex items-center gap-1 text-orange-500 dark:text-orange-400">
-                      <Flame className="w-3 h-3" />
-                      <span>{isNaN(item.trend_score) ? 0 : Math.round(item.trend_score)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action */}
-                <button
-                  className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg transition-all active:scale-95 text-sm flex-shrink-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelectVideo(item);
-                  }}
-                >
-                  Practice
-                </button>
-              </div>
-
-              {/* Trend Badge for Top 3 */}
-              {index < 3 && (
-                <div className="absolute top-2 right-2 px-2 py-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full">
-                  <Flame className="w-3 h-3 inline mr-1" />
-                  Hot
+              {/* HOT 标签 */}
+              {(index < 3 || item.trend_score > 5) && (
+                <div className="absolute top-4 right-4 bg-[#F97316] text-white px-2.5 py-1 rounded-lg text-[10px] font-black flex items-center gap-1 shadow-lg shadow-orange-500/20">
+                  <Flame className="w-3 h-3 fill-current" />
+                  HOT
                 </div>
               )}
+
+              <div className="flex flex-col h-full">
+                {/* 顶部：名次图标和标题 */}
+                <div className="flex items-start gap-3 mb-4">
+                  <div className="flex-shrink-0 w-14 h-14 bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-3xl shadow-sm border border-gray-100 dark:border-white/5">
+                    {getRankIcon(index + 1)}
+                  </div>
+                  <div className="flex-1 pt-1">
+                    <h4 className="text-lg font-black text-[#1E293B] dark:text-white leading-tight line-clamp-1">
+                      {item.video_title}
+                    </h4>
+                    {/* 统计数据 */}
+                    <div className="flex items-center gap-4 mt-1.5">
+                      <div className="flex items-center gap-1 text-gray-500 dark:text-slate-400">
+                        <Eye className="w-3.5 h-3.5" />
+                        <span className="text-xs font-bold leading-none">
+                          {(() => {
+                            const count = selectedPeriod === 'week' ? item.view_count_week : item.view_count_month;
+                            return count >= 1000 ? `${(count / 1000).toFixed(1)}k` : count || 0;
+                          })()}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 text-gray-500 dark:text-slate-400">
+                        <ThumbsUp className="w-3.5 h-3.5" />
+                        <span className="text-xs font-bold leading-none">
+                          {Math.round(item.trend_score * 5) || 0}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 底部按钮 */}
+                <button
+                  onClick={() => handleSelectVideo(item)}
+                  className="mt-2 w-full bg-[#0EA5E9] hover:bg-[#0284C7] active:bg-[#0369A1] text-white font-black py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 group"
+                >
+                  Practice Now
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
             </div>
           ))
         )}
       </div>
-
-      {/* View More */}
-      {!isLoading && trendingItems.length > 0 && (
-        <button
-          onClick={() => {
-            console.log('View all trending clicked');
-          }}
-          className="w-full mt-4 py-2 text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 rounded-lg transition-colors"
-        >
-          View all trending content →
-        </button>
-      )}
-
-      {/* Tips */}
-      {trendingItems.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-white/10">
-          <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4" />
-            Trending is based on views and completion rates
-          </div>
-        </div>
-      )}
     </div>
   );
 };
 
 export default TrendingLeaderboard;
+

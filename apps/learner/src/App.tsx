@@ -1,5 +1,6 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, X, Languages } from 'lucide-react';
 import { TranscriptLine, PlaybackState, MediaAsset } from '@echospeak/types';
 import { INITIAL_TRANSCRIPT } from './constants';
@@ -346,7 +347,7 @@ const AppContent: React.FC = () => {
               </button>
             </div>
             <p className="text-sm text-slate-400 mb-4">
-              粘贴任何格式：仅英文、仅中文、或乱序的中英混合文本。<br/>
+              粘贴任何格式：仅英文、仅中文、或乱序的中英混合文本。<br />
               AI 会自动为您对齐、翻译并生成标准剧本。
             </p>
             <textarea
@@ -375,59 +376,70 @@ const AppContent: React.FC = () => {
 
       {/* 路由 */}
       {!showOnboarding && (
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <HomePage
-                onNavigateToVideo={handleNavigateToVideo}
-                userLevel={userLevel}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="flex-1"
+          >
+            <Routes location={location}>
+              <Route
+                path="/"
+                element={
+                  <HomePage
+                    onNavigateToVideo={handleNavigateToVideo}
+                    userLevel={userLevel}
+                  />
+                }
               />
-            }
-          />
-          <Route
-            path="/video/:id"
-            element={
-              <VideoLearningPage
-                videoId={currentVideoId}
-                transcript={transcript}
-                activeId={activeId}
-                onActiveLineChange={setActiveId}
-                playbackState={playbackState}
-                playerRef={playerRef}
-                onPlayerReady={onPlayerReady}
-                onPlayerStateChange={onPlayerStateChange}
-                notationProgress={notationProgress}
-                isImporting={isImporting}
-                feedback={feedback}
-                showOverlaySubtitle={showOverlaySubtitle}
-                onToggleSubtitle={() => setShowOverlaySubtitle(!showOverlaySubtitle)}
+              <Route
+                path="/video/:id"
+                element={
+                  <VideoLearningPage
+                    videoId={currentVideoId || undefined}
+                    transcript={transcript}
+                    activeId={activeId}
+                    onActiveLineChange={setActiveId}
+                    playbackState={playbackState}
+                    playerRef={playerRef}
+                    onPlayerReady={onPlayerReady}
+                    onPlayerStateChange={onPlayerStateChange}
+                    notationProgress={notationProgress}
+                    isImporting={isImporting}
+                    feedback={feedback}
+                    showOverlaySubtitle={showOverlaySubtitle}
+                    onToggleSubtitle={() => setShowOverlaySubtitle(!showOverlaySubtitle)}
+                  />
+                }
               />
-            }
-          />
-          <Route path="/learn" element={<LearnPage />} />
-          <Route path="/practice" element={<PracticePage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/discover" element={<DiscoverPage />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/help" element={<HelpPage />} />
-          <Route path="/subscription" element={<SubscriptionPage />} />
-        </Routes>
+              <Route path="/learn" element={<LearnPage />} />
+              <Route path="/practice" element={<PracticePage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/discover" element={<DiscoverPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/help" element={<HelpPage />} />
+              <Route path="/subscription" element={<SubscriptionPage />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
       )}
 
       {/* 底部导航 - 只在移动端显示，且不在引导页时 */}
       {!showOnboarding && (
         <MobileBottomNav activeTab={getActiveTab()} onTabChange={(tab) => {
           const routes: Record<TabType, string> = {
-          home: '/',
-          learn: '/learn',
-          practice: '/practice',
-          favorites: '/favorites',
-          profile: '/profile',
-        };
-        window.location.href = routes[tab];
-      }} />
+            home: '/',
+            learn: '/learn',
+            practice: '/practice',
+            favorites: '/favorites',
+            profile: '/profile',
+          };
+          window.location.href = routes[tab];
+        }} />
       )}
     </>
   );

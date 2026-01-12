@@ -7,6 +7,7 @@
 import React, { useEffect, useState } from 'react';
 import { getCheckinCalendar } from '../../services/p0FeaturesClient';
 import { ChevronLeft, ChevronRight, Calendar, TrendingUp, Flame } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface CheckinCalendarV2Props {
   userId?: string;
@@ -20,10 +21,11 @@ interface DayData {
   hasData: boolean;
 }
 
-export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({ 
-  userId, 
-  useDemoData = false 
+export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
+  userId,
+  useDemoData = false
 }) => {
+  const { t, i18n } = useTranslation();
   const [calendarData, setCalendarData] = useState<DayData[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hoveredDay, setHoveredDay] = useState<DayData | null>(null);
@@ -56,7 +58,7 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
       // 构建日期网格 - 最近 N 个月
       const today = new Date();
       const daysToShow = viewMonths * 30;
-      
+
       for (let i = daysToShow - 1; i >= 0; i--) {
         const date = new Date(today);
         date.setDate(today.getDate() - i);
@@ -137,9 +139,9 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
     if (!day.hasData) {
       return 'bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700';
     }
-    
+
     const mins = day.duration / 60;
-    
+
     if (mins < 10) {
       return 'bg-teal-200 dark:bg-teal-900 border-teal-300 dark:border-teal-800';
     }
@@ -159,7 +161,7 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
   const groupByWeeks = (data: DayData[]): DayData[][] => {
     const weeks: DayData[][] = [];
     let currentWeek: DayData[] = [];
-    
+
     // 填充第一周的前面空白
     const firstDate = new Date(data[0]?.date);
     const firstDayOfWeek = firstDate.getDay();
@@ -174,10 +176,10 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
 
     data.forEach((day, index) => {
       currentWeek.push(day);
-      
+
       const date = new Date(day.date);
       const dayOfWeek = date.getDay();
-      
+
       // 周六结束，开始新的一周
       if (dayOfWeek === 6 || index === data.length - 1) {
         // 填充最后一周的后面空白
@@ -199,15 +201,15 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
 
   const formatDuration = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
-    if (mins < 60) return `${mins}分钟`;
+    if (mins < 60) return `${mins}${t('common.mins')}`;
     const hours = Math.floor(mins / 60);
     const remainingMins = mins % 60;
-    return remainingMins > 0 ? `${hours}小时${remainingMins}分钟` : `${hours}小时`;
+    return remainingMins > 0 ? `${hours}${t('common.hours')}${remainingMins}${t('common.mins')}` : `${hours}${t('common.hours')}`;
   };
 
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('zh-CN', {
+    return date.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'zh-CN', {
       month: 'long',
       day: 'numeric',
       weekday: 'long',
@@ -220,7 +222,7 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
     const activeDays = calendarData.filter(d => d.hasData).length;
     const totalDuration = calendarData.reduce((sum, d) => sum + d.duration, 0);
     const consistency = totalDays > 0 ? Math.round((activeDays / totalDays) * 100) : 0;
-    
+
     // 计算当前连续打卡天数
     let currentStreak = 0;
     for (let i = calendarData.length - 1; i >= 0; i--) {
@@ -230,7 +232,7 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
         break;
       }
     }
-    
+
     // 计算最长连续打卡
     let maxStreak = 0;
     let streak = 0;
@@ -254,8 +256,11 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
   };
 
   const stats = calculateStats();
+
   const weeks = groupByWeeks(calendarData);
-  const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+  const weekdays = i18n.language.startsWith('zh')
+    ? ['日', '一', '二', '三', '四', '五', '六']
+    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   if (isLoading) {
     return (
@@ -272,10 +277,10 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
         <div>
           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
             <Calendar className="h-5 w-5 text-teal-600 dark:text-teal-400" />
-            学习日历
+            {t('calendar.title')}
           </h3>
           <p className="text-sm text-gray-600 dark:text-slate-400">
-            最近 {viewMonths} 个月的打卡记录
+            {t('calendar.recentMonths', { count: viewMonths })}
           </p>
         </div>
 
@@ -283,23 +288,21 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
         <div className="flex gap-2">
           <button
             onClick={() => setViewMonths(3)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              viewMonths === 3
-                ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
-            }`}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${viewMonths === 3
+              ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+              }`}
           >
-            3个月
+            {t('calendar.3months')}
           </button>
           <button
             onClick={() => setViewMonths(12)}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              viewMonths === 12
-                ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
-            }`}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${viewMonths === 12
+              ? 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-400'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400'
+              }`}
           >
-            全年
+            {t('calendar.fullYear')}
           </button>
         </div>
       </div>
@@ -311,13 +314,13 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
           <div className="flex items-center gap-2 mb-2">
             <Flame className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             <p className="text-xs font-semibold text-orange-700 dark:text-orange-300">
-              当前连续
+              {t('calendar.currentStreak')}
             </p>
           </div>
           <p className="text-3xl font-black text-orange-900 dark:text-orange-100">
             {stats.currentStreak}
           </p>
-          <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">天</p>
+          <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">{t('common.days')}</p>
         </div>
 
         {/* 最长连续 */}
@@ -325,25 +328,25 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="h-5 w-5 text-teal-600 dark:text-teal-400" />
             <p className="text-xs font-semibold text-teal-700 dark:text-teal-300">
-              最长连续
+              {t('calendar.maxStreak')}
             </p>
           </div>
           <p className="text-3xl font-black text-teal-900 dark:text-teal-100">
             {stats.maxStreak}
           </p>
-          <p className="text-xs text-teal-600 dark:text-teal-400 mt-1">天</p>
+          <p className="text-xs text-teal-600 dark:text-teal-400 mt-1">{t('common.days')}</p>
         </div>
 
         {/* 坚持率 */}
         <div className="bg-gradient-to-br from-cyan-50 to-teal-50 dark:from-cyan-900/20 dark:to-teal-900/20 rounded-xl p-4 border border-cyan-200 dark:border-cyan-700">
           <p className="text-xs font-semibold text-cyan-700 dark:text-cyan-300 mb-2">
-            坚持率
+            {t('calendar.consistency')}
           </p>
           <p className="text-3xl font-black text-cyan-900 dark:text-cyan-100">
             {stats.consistency}%
           </p>
           <p className="text-xs text-cyan-600 dark:text-cyan-400 mt-1">
-            {stats.activeDays}/{stats.totalDays}天
+            {stats.activeDays}/{stats.totalDays}{t('common.days')}
           </p>
         </div>
       </div>
@@ -356,15 +359,15 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
             {weeks.map((week, weekIndex) => {
               const firstDay = week.find(d => d.date);
               if (!firstDay || !firstDay.date) return <div key={weekIndex} className="w-3" />;
-              
+
               const date = new Date(firstDay.date);
               const isFirstWeekOfMonth = date.getDate() <= 7;
-              
+
               return (
                 <div key={weekIndex} className="w-3">
                   {isFirstWeekOfMonth && (
                     <div className="text-[10px] font-medium text-gray-600 dark:text-gray-400">
-                      {date.getMonth() + 1}月
+                      {date.getMonth() + 1}{t('common.month')}
                     </div>
                   )}
                 </div>
@@ -420,12 +423,12 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
 
           {/* 颜色图例 */}
           <div className="flex items-center gap-2 mt-4 justify-end">
-            <span className="text-xs text-gray-600 dark:text-gray-400">少</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">{t('calendar.less')}</span>
             <div className="h-3 w-3 rounded-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700" />
             <div className="h-3 w-3 rounded-sm bg-teal-200 dark:bg-teal-900 border border-teal-300 dark:border-teal-800" />
             <div className="h-3 w-3 rounded-sm bg-teal-400 dark:bg-teal-700 border border-teal-500 dark:border-teal-600" />
             <div className="h-3 w-3 rounded-sm bg-teal-600 dark:bg-teal-500 border border-teal-700 dark:border-teal-400" />
-            <span className="text-xs text-gray-600 dark:text-gray-400">多</span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">{t('calendar.more')}</span>
           </div>
         </div>
       </div>
@@ -444,14 +447,14 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
           {hoveredDay.hasData ? (
             <>
               <div className="text-teal-400 font-semibold">
-                ✓ 已练习 {formatDuration(hoveredDay.duration)}
+                ✓ {t('calendar.practiced')} {formatDuration(hoveredDay.duration)}
               </div>
               <div className="text-gray-400 text-[10px] mt-1">
-                完成 {hoveredDay.count} 个练习
+                {t('calendar.completed')} {hoveredDay.count} {t('calendar.exercises')}
               </div>
             </>
           ) : (
-            <div className="text-gray-400">未练习</div>
+            <div className="text-gray-400">{t('calendar.noPractice')}</div>
           )}
         </div>
       )}
@@ -459,11 +462,11 @@ export const CheckinCalendarV2: React.FC<CheckinCalendarV2Props> = ({
       {/* 底部总结 */}
       <div className="mt-6 pt-4 border-t border-gray-200 dark:border-white/10">
         <p className="text-sm text-gray-600 dark:text-slate-400 text-center">
-          累计学习 <span className="font-bold text-teal-600 dark:text-teal-400">{formatDuration(stats.totalDuration)}</span>，
-          打卡 <span className="font-bold text-teal-600 dark:text-teal-400">{stats.activeDays}</span> 天
+          {t('calendar.totalStudy')} <span className="font-bold text-teal-600 dark:text-teal-400">{formatDuration(stats.totalDuration)}</span>，
+          {t('calendar.checkedIn')} <span className="font-bold text-teal-600 dark:text-teal-400">{stats.activeDays}</span> {t('common.days')}
           {stats.currentStreak >= 3 && (
             <span className="ml-2">
-              🔥 已连续 <span className="font-bold text-orange-600">{stats.currentStreak}</span> 天！
+              🔥 {t('calendar.streakMessage', { days: stats.currentStreak })}
             </span>
           )}
         </p>

@@ -6,6 +6,7 @@
    Accessibility: Reduced Motion Support
    ======================================== */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -21,88 +22,96 @@
    ======================================== */
 
 :root {
-  /* 主色 - Teal 青绿色（教育/成长） */
+  /* ========================================
+     EchoSpeak Professional Design Variables
+     ======================================== */
+
+  /* Core Colors - Professional Teal Fresh */
   --color-primary: #0D9488;
   --color-primary-light: #2DD4BF;
   --color-primary-dark: #0F766E;
 
-  /* 强调色 - Cyan 青色 */
-  --color-accent: #14B8A6;
-  --color-accent-light: #2DD4BF;
-  --color-accent-dark: #0F766E;
+  --color-accent: #F4D35E;
+  --color-muted: #64748B;
 
-  /* CTA 色 - 橙色 */
-  --color-warning: #EA580C;
-  --color-warning-light: #FB923C;
-  --color-warning-dark: #C2410C;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
 
-  /* 信息色 - 灰色 */
-  --color-info: #6366F6;
-  --color-info-light: #94A3B8;
-  --color-info-dark: #475569;
+  /* Backgrounds */
+  --color-bg: #F0FDFA;
+  --color-surface: rgba(255, 255, 255, 0.82);
 
-  /* 背景色 - 浅色模式 */
-  --color-bg: #FFFFFF;
-  --color-bg-secondary: #F0FDFA;      /* Teal 极浅背景 */
-  --color-bg-muted: #CCFBF1;          /* Teal 浅背景 */
-
-  /* 表面色 - 浅色模式 */
-  --color-surface: #F0FDFA;           /* Teal 卡片背景 */
-  --color-surface-hover: #CCFBF1;
-  --color-surface-active: #99F6E4;
-
-  /* 文字色 - 浅色模式 */
+  /* Text - Slate Series for better readability */
   --color-text-primary: #0F172A;
-  --color-text-secondary: #64748B;
+  --color-text-secondary: #475569;
   --color-text-tertiary: #94A3B8;
 
-  /* 边框和分割线 - 浅色模式 */
-  --color-border: #E2E8F0;
-  --color-divider: #F1F5F9;
+  /* Spacing */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
 
-  /* 功能色 */
-  --color-success: #22C55E;
-  --color-danger: #EF4444;
+  /* Radius */
+  --radius-glass: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 999px;
+
+  /* Effects */
+  --shadow-glass: 0px 20px 70px rgba(13, 148, 136, 0.12);
+  --shadow-panel: 0px 12px 32px rgba(15, 23, 42, 0.08);
 }
 
-/* ========================================
-   深色模式配色
-   ======================================== */
-
 .dark {
-  /* 主色 - Teal（深色模式稍微提亮） */
+  /* Core Colors (Dark) */
   --color-primary: #2DD4BF;
-  --color-primary-light: #5EEAD4;
-  --color-primary-dark: #14B8A6;
+  --color-primary-light: #99F6E4;
+  --color-primary-dark: #115E59;
 
-  /* 强调色 - Cyan */
-  --color-accent: #2DD4BF;
-  --color-accent-light: #5EEAD4;
-  --color-accent-dark: #14B8A6;
+  --color-accent: #F2C14E;
+  --color-muted: #94A3B8;
 
-  /* CTA 色 - 橙色（深色模式更亮） */
-  --color-warning: #FB923C;
-  --color-warning-light: #FDBA74;
-  --color-warning-dark: #EA580C;
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+  --color-danger: #FB7185;
 
-  /* 背景色 - 深色模式 */
-  --color-bg: #0F172A;        /* 深蓝黑（不是纯黑） */
-  --color-bg-secondary: #1E293B;
-  --color-bg-muted: #334155;
+  /* Backgrounds (Dark) */
+  --color-bg: #030712;
+  --color-surface: rgba(15, 23, 42, 0.85);
 
-  /* 表面色 - 深色模式 */
-  --color-surface: #1E293B;   /* 深灰蓝（不是纯灰） */
-  --color-surface-hover: #334155;
-  --color-surface-active: #475569;
-
-  /* 文字色 - 深色模式 */
-  --color-text-primary: #F1F5F9;  /* 浅灰白（不是纯白） */
+  /* Text (Dark) */
+  --color-text-primary: #F8FAFC;
   --color-text-secondary: #94A3B8;
   --color-text-tertiary: #64748B;
 
-  /* 边框和分割线 - 深色模式 */
-  --color-border: #334155;
-  --color-divider: #1E293B;
+  /* Effects (Dark) */
+  --shadow-glass: 0px 20px 70px rgba(0, 0, 0, 0.5);
+  --shadow-panel: 0px 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+@layer components {
+  .glass-card {
+    background: var(--color-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: var(--shadow-glass);
+    border-radius: var(--radius-glass);
+  }
+
+  .dark .glass-card {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .panel-card {
+    background: var(--color-bg);
+    box-shadow: var(--shadow-panel);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border);
+  }
 }
 
 /* ========================================
@@ -110,6 +119,7 @@
    ======================================== */
 
 @layer base {
+
   /* 禁用双击缩放，提升触摸响应速度 */
   * {
     touch-action: manipulation;
@@ -129,7 +139,8 @@
   /* 确保全屏高度在移动端正确 */
   body {
     min-height: 100vh;
-    min-height: 100dvh; /* 动态视口高度，适配移动端浏览器栏 */
+    min-height: 100dvh;
+    /* 动态视口高度，适配移动端浏览器栏 */
   }
 
   /* 文本不可选择（提升触摸体验） */
@@ -198,6 +209,7 @@
    ======================================== */
 
 @layer utilities {
+
   /* 隐藏滚动条但保持滚动功能 */
   .scrollbar-hide {
     -ms-overflow-style: none;

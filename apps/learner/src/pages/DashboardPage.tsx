@@ -1,5 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
 import { useAuth } from '../components/AuthProvider';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { StreakCounter, CheckinCalendar } from '../components/checkin';
 import { getUserStats, formatDuration } from '../services/p0FeaturesClient';
@@ -7,6 +8,7 @@ import { BarChart3, Flame, Clock, Target, Trophy, ArrowRight } from 'lucide-reac
 import { UserStats } from '@echospeak/types';
 
 export const DashboardPage: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const userId = user?.id;
@@ -26,12 +28,12 @@ export const DashboardPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="text-center">
-          <p className="text-gray-700 dark:text-gray-300 mb-4 text-lg">请登录以查看学习面板</p>
+          <p className="text-gray-700 dark:text-gray-300 mb-4 text-lg">{t('dashboard.loginMessage')}</p>
           <button
             onClick={() => navigate('/profile')}
             className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
           >
-            立即登录
+            {t('dashboard.loginBtn')}
           </button>
         </div>
       </div>
@@ -64,14 +66,14 @@ export const DashboardPage: React.FC = () => {
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                 <BarChart3 className="w-6 h-6 text-teal-600 dark:text-blue-500" />
-                学习概览
+                {t('dashboard.overview')}
               </h1>
             </div>
             <button
               onClick={() => navigate(-1)}
               className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
             >
-              关闭
+              {t('common.close')}
             </button>
           </div>
         </div>
@@ -92,10 +94,10 @@ export const DashboardPage: React.FC = () => {
               </div>
               <div className="flex-1">
                 <p className="font-bold text-lg mb-1">
-                  {daysSinceLastPractice === 1 ? '昨天' : `${daysSinceLastPractice}天前`} 练习过
+                  {daysSinceLastPractice === 1 ? t('dashboard.yesterday') : `${daysSinceLastPractice} ${t('dashboard.daysAgo')}`} {t('dashboard.practiced')}
                 </p>
                 <p className="text-sm text-orange-50">
-                  今天练习可保持连续打卡！别让 streak 断了 🔥
+                  {t('dashboard.keepStreak')}
                 </p>
               </div>
             </div>
@@ -111,7 +113,7 @@ export const DashboardPage: React.FC = () => {
         <section className="bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-lg">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
             <Target className="w-5 h-5 text-teal-600 dark:text-blue-500" />
-            学习成果总览
+            {t('dashboard.achievements')}
           </h2>
           <div className="grid grid-cols-3 gap-4">
             {/* 总时长 */}
@@ -122,7 +124,7 @@ export const DashboardPage: React.FC = () => {
               <div className="text-2xl font-black text-gray-900 dark:text-white mb-1">
                 {userStats ? formatDuration(userStats.total_practice_seconds) : '0m'}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">总时长</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t('dashboard.totalTime')}</div>
             </div>
 
             {/* 完成视频 */}
@@ -133,7 +135,7 @@ export const DashboardPage: React.FC = () => {
               <div className="text-2xl font-black text-gray-900 dark:text-white mb-1">
                 {userStats?.total_videos_completed || 0}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">完成视频</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t('dashboard.completedVideos')}</div>
             </div>
 
             {/* 练习句子 */}
@@ -144,14 +146,14 @@ export const DashboardPage: React.FC = () => {
               <div className="text-2xl font-black text-gray-900 dark:text-white mb-1">
                 {userStats?.total_sentences_practiced || 0}
               </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">练习句子</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 font-medium">{t('dashboard.practicedSentences')}</div>
             </div>
           </div>
 
           {/* 进度条 */}
           <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-600 dark:text-gray-400">当前等级</span>
+              <span className="text-gray-600 dark:text-gray-400">{t('dashboard.currentLevel')}</span>
               <span className="font-bold text-gray-900 dark:text-white">
                 Lv.{userStats?.level || 1} · {userStats?.total_xp || 0} XP
               </span>
@@ -174,7 +176,7 @@ export const DashboardPage: React.FC = () => {
 
         {/* 快捷入口 */}
         <section className="bg-white dark:bg-gray-900 rounded-2xl p-6 border-2 border-gray-200 dark:border-gray-800 shadow-lg">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">更多功能</h2>
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">{t('dashboard.moreFeatures')}</h2>
           <div className="space-y-3">
             <button
               onClick={() => navigate('/profile')}
@@ -185,8 +187,8 @@ export const DashboardPage: React.FC = () => {
                   <Trophy className="w-5 h-5 text-amber-600 dark:text-amber-500" />
                 </div>
                 <div className="text-left">
-                  <div className="font-semibold text-gray-900 dark:text-white">成就徽章</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">查看已获得的荣誉</div>
+                  <div className="font-semibold text-gray-900 dark:text-white">{t('dashboard.badges')}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">{t('dashboard.badgesDesc')}</div>
                 </div>
               </div>
               <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
@@ -201,8 +203,8 @@ export const DashboardPage: React.FC = () => {
                   <Clock className="w-5 h-5 text-green-600 dark:text-green-500" />
                 </div>
                 <div className="text-left">
-                  <div className="font-semibold text-gray-900 dark:text-white">学习历史</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">回顾练习记录</div>
+                  <div className="font-semibold text-gray-900 dark:text-white">{t('dashboard.history')}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">{t('dashboard.historyDesc')}</div>
                 </div>
               </div>
               <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
@@ -217,8 +219,8 @@ export const DashboardPage: React.FC = () => {
                   <BarChart3 className="w-5 h-5 text-teal-600 dark:text-blue-500" />
                 </div>
                 <div className="text-left">
-                  <div className="font-semibold text-gray-900 dark:text-white">通知设置</div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400">管理每日提醒</div>
+                  <div className="font-semibold text-gray-900 dark:text-white">{t('dashboard.notifications')}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">{t('dashboard.notificationsDesc')}</div>
                 </div>
               </div>
               <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors" />
@@ -235,14 +237,14 @@ export const DashboardPage: React.FC = () => {
               </div>
               <div className="flex-1">
                 <p className="font-bold text-lg mb-1">
-                  太棒了！你已经连续打卡 {userStats?.current_streak} 天 🎉
+                  {t('dashboard.streakTitle', { days: userStats?.current_streak })}
                 </p>
                 <p className="text-sm text-purple-50">
                   {userStats?.current_streak && userStats.current_streak >= 30
-                    ? '你是真正的学习大师！'
+                    ? t('dashboard.streakMaster')
                     : userStats?.current_streak && userStats.current_streak >= 14
-                      ? '继续保持，即将达成一个月成就！'
-                      : '继续坚持，养成好习惯！'}
+                      ? t('dashboard.streakMonth')
+                      : t('dashboard.streakHabit')}
                 </p>
               </div>
             </div>

@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
 import { getUserCheckins, recordCheckin, formatDuration } from '../../services/p0FeaturesClient';
+import { useTranslation } from 'react-i18next';
 import { UserCheckin } from '@echospeak/types';
 
 interface StreakCounterProps {
@@ -14,6 +15,7 @@ interface StreakCounterProps {
 }
 
 export const StreakCounter: React.FC<StreakCounterProps> = ({ userId, onCheckin }) => {
+  const { t } = useTranslation();
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [totalCheckins, setTotalCheckins] = useState<number>(0);
   const [todayPracticeDuration, setTodayPracticeDuration] = useState<number>(0);
@@ -84,60 +86,56 @@ export const StreakCounter: React.FC<StreakCounterProps> = ({ userId, onCheckin 
   }
 
   return (
-    <div className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 backdrop-blur-sm rounded-2xl p-6 border-2 border-orange-200 dark:border-orange-800/50 shadow-lg">
-      <div className="flex items-center justify-between">
+    <div className="bg-[#FFF1E6]/50 dark:bg-orange-900/10 backdrop-blur-sm rounded-[2.5rem] p-6 border-2 border-[#FFE8D6] dark:border-orange-800/20 shadow-sm relative overflow-hidden group">
+      {/* Background decoration */}
+      <div className="absolute -top-12 -right-12 w-24 h-24 bg-orange-400/5 rounded-full blur-2xl group-hover:bg-orange-400/10 transition-colors"></div>
+
+      <div className="flex items-center justify-between gap-4">
         {/* Streak Display */}
         <div className="flex items-center gap-4">
           <div className={`relative ${isAnimating ? 'animate-bounce' : ''}`}>
-            <Flame
-              className={`w-12 h-12 ${
-                currentStreak > 0
-                  ? currentStreak >= 30
-                    ? 'text-cyan-600 dark:text-purple-500'
-                    : currentStreak >= 7
-                    ? 'text-orange-600 dark:text-orange-500'
-                    : 'text-yellow-600 dark:text-yellow-500'
-                  : 'text-gray-400 dark:text-gray-600'
-              }`}
-              fill={currentStreak > 0 ? 'currentColor' : 'none'}
-            />
+            <div className="w-16 h-16 rounded-2xl bg-white dark:bg-gray-800 flex items-center justify-center shadow-sm">
+              <Flame
+                className={`w-10 h-10 ${currentStreak > 0
+                  ? 'text-orange-600 dark:text-orange-500'
+                  : 'text-orange-400 dark:text-orange-400'
+                  }`}
+                fill={currentStreak > 0 ? 'currentColor' : 'none'}
+              />
+            </div>
             {isAnimating && (
               <div className="absolute inset-0 bg-orange-500/30 rounded-full blur-xl animate-ping" />
             )}
           </div>
           <div>
-            <div className="text-3xl font-black text-gray-900 dark:text-white">{currentStreak}</div>
-            <div className="text-sm font-medium text-gray-600 dark:text-gray-400">天连续打卡</div>
+            <div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-3xl font-black text-gray-900 dark:text-white leading-none">{currentStreak}</span>
+                <span className="text-sm font-bold text-gray-500 dark:text-gray-400">{t('streak.dayStreak')}</span>
+              </div>
+              <div className="text-sm font-semibold text-orange-600/80 dark:text-orange-400/80 mt-1">
+                {hasCheckedInToday ? t('streak.keepItUp') : t('streak.startHabit')}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="text-right">
-          <div className="text-base font-semibold text-gray-700 dark:text-gray-300">
-            共 {totalCheckins} 次打卡
-          </div>
-          {todayPracticeDuration > 0 && (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              今日练习 {formatDuration(todayPracticeDuration)}
+        {/* Check-in Button / Status */}
+        <div className="flex-shrink-0">
+          {!hasCheckedInToday ? (
+            <button
+              onClick={handleCheckin}
+              className="flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-[#FF6B4B] to-[#FF4D4D] hover:from-[#FF7B5B] hover:to-[#FF5D5D] text-white font-black rounded-3xl transition-all active:scale-95 shadow-xl shadow-orange-500/20 text-sm group/btn"
+            >
+              {t('streak.checkIn')}
+              <span className="inline-block transition-transform group-hover/btn:translate-x-1">→</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2 px-6 py-4 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 font-black rounded-3xl border-2 border-orange-500/20 text-sm">
+              ✓ {t('streak.done')}
             </div>
           )}
         </div>
-
-        {/* Check-in Button */}
-        {!hasCheckedInToday && (
-          <button
-            onClick={handleCheckin}
-            className="px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white font-bold rounded-xl transition-all active:scale-95 shadow-lg shadow-orange-500/30 text-lg"
-          >
-            立即打卡
-          </button>
-        )}
-
-        {hasCheckedInToday && (
-          <div className="px-6 py-3 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-bold rounded-xl border-2 border-green-500/50 text-lg">
-            ✓ 已打卡
-          </div>
-        )}
       </div>
     </div>
   );

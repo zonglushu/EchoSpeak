@@ -1,5 +1,7 @@
 ﻿import React from 'react';
-import { CheckCircle, Target } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 interface DailyGoal {
     id: string;
@@ -13,66 +15,120 @@ interface DailyGoalsProps {
 }
 
 export const DailyGoals: React.FC<DailyGoalsProps> = ({ goals, onGoalToggle }) => {
+    const { t } = useTranslation();
     const completedCount = goals.filter(g => g.completed).length;
     const progress = (completedCount / goals.length) * 100;
 
+    // SVG Circular Progress config
+    const size = 100;
+    const strokeWidth = 10;
+    const center = size / 2;
+    const radius = size / 2 - strokeWidth / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (progress / 100) * circumference;
+
     return (
-        <div className="bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-lg">
-            {/* 标题和进度 */}
-            <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                        <Target className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                        <h3 className="text-base font-black text-gray-900 dark:text-white">今日目标</h3>
-                        <p className="text-xs text-gray-600 dark:text-gray-400">
-                            已完成 {completedCount}/{goals.length} 个任务
-                        </p>
-                    </div>
-                </div>
-                <div className="text-right">
-                    <p className="text-2xl font-black text-teal-600 dark:text-blue-500">{Math.round(progress)}%</p>
-                </div>
-            </div>
+        <div className="bg-white/70 dark:bg-gray-900/70 backdrop-blur-md rounded-[2.5rem] p-8 border border-white dark:border-gray-800 shadow-xl shadow-blue-500/5 transition-all">
+            <div className="flex items-center justify-between gap-8 mb-8">
+                <div className="flex-1">
+                    <h3 className="text-2xl font-black text-gray-950 dark:text-white tracking-tight mb-2">{t('home.todaysGoal')}</h3>
+                    <p className="text-sm font-medium text-gray-400 leading-relaxed mb-4">{t('home.makingProgress')}</p>
 
-            {/* 进度条 */}
-            <div className="w-full bg-gray-200 dark:bg-gray-800 rounded-full h-2 mb-4 overflow-hidden">
-                <div
-                    className="h-full bg-gradient-to-r from-teal-600 to-cyan-500 transition-all duration-500 ease-out"
-                    style={{ width: `${progress}%` }}
-                />
-            </div>
-
-            {/* 任务列表 */}
-            <div className="space-y-2">
-                {goals.map((goal) => (
-                    <button
-                        key={goal.id}
-                        onClick={() => onGoalToggle?.(goal.id)}
-                        className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all ${goal.completed
-                                ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-                                : 'bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-750'
-                            }`}
-                    >
-                        <div
-                            className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${goal.completed
-                                    ? 'bg-green-600 border-green-600'
-                                    : 'border-gray-300 dark:border-gray-600'
-                                }`}
-                        >
-                            {goal.completed && <CheckCircle className="w-4 h-4 text-white" />}
+                    <div className="flex items-center gap-4">
+                        <div className="inline-flex items-center px-4 py-1.5 bg-[#E1F1FF] dark:bg-blue-900/30 rounded-full text-[11px] font-black text-[#0085FF] dark:text-blue-400 tracking-wider">
+                            {completedCount}/{goals.length} {t('common.tasks')}
                         </div>
-                        <span
-                            className={`flex-1 text-left text-sm font-medium ${goal.completed
-                                    ? 'text-green-700 dark:text-green-400 line-through'
-                                    : 'text-gray-900 dark:text-white'
-                                }`}
-                        >
-                            {goal.title}
+                        <span className="text-[11px] font-bold text-gray-300 dark:text-gray-600 uppercase tracking-widest">~15 {t('common.minsLeft')}</span>
+                    </div>
+                </div>
+
+                {/* Circular Progress */}
+                <div className="relative flex-shrink-0">
+                    <svg width={size} height={size} className="transform -rotate-90">
+                        {/* Background Circle */}
+                        <circle
+                            cx={center}
+                            cy={center}
+                            r={radius}
+                            fill="transparent"
+                            stroke="currentColor"
+                            strokeWidth={strokeWidth}
+                            className="text-[#F5F9FF] dark:text-gray-800"
+                        />
+                        {/* Progress Circle */}
+                        <motion.circle
+                            cx={center}
+                            cy={center}
+                            r={radius}
+                            fill="transparent"
+                            stroke="#00A3FF"
+                            strokeWidth={strokeWidth}
+                            strokeDasharray={circumference}
+                            initial={{ strokeDashoffset: circumference }}
+                            animate={{ strokeDashoffset: offset }}
+                            transition={{ duration: 1.5, ease: "easeOut" }}
+                            strokeLinecap="round"
+                        />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-xl font-black text-gray-950 dark:text-white leading-none">
+                            {Math.round(progress)}<span className="text-sm">%</span>
                         </span>
-                    </button>
-                ))}
+                    </div>
+                    {/* Glow effect */}
+                    <div className="absolute inset-0 bg-blue-400/10 rounded-full blur-xl animate-pulse -z-10" />
+                </div>
+            </div>
+
+            {/* Task List - Design Aligned */}
+            {/* Task List - Carousel */}
+            <div className="relative group/list">
+                <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-1 px-1 pb-4"
+                    style={{
+                        scrollbarWidth: 'none',
+                        msOverflowStyle: 'none'
+                    }}>
+                    {Array.from({ length: Math.ceil(goals.length / 2) }).map((_, pageIndex) => (
+                        <div key={pageIndex} className="min-w-full snap-center space-y-3 px-1">
+                            {goals.slice(pageIndex * 2, (pageIndex + 1) * 2).map((goal) => (
+                                <button
+                                    key={goal.id}
+                                    onClick={() => onGoalToggle?.(goal.id)}
+                                    className="group/item w-full flex items-center gap-4 p-5 bg-[#F8FAFC]/50 dark:bg-gray-800/30 rounded-3xl border border-transparent hover:border-blue-100 dark:hover:border-blue-900/30 transition-all active:scale-[0.98]"
+                                >
+                                    <div
+                                        className={`flex-shrink-0 w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all ${goal.completed
+                                            ? 'bg-[#0085FF] border-[#0085FF] shadow-lg shadow-blue-500/20'
+                                            : 'border-gray-200 dark:border-gray-700'
+                                            }`}
+                                    >
+                                        {goal.completed && <CheckCircle className="w-5 h-5 text-white" />}
+                                    </div>
+                                    <span
+                                        className={`flex-1 text-left text-sm font-bold tracking-tight ${goal.completed
+                                            ? 'text-gray-400 dark:text-gray-500 line-through'
+                                            : 'text-gray-700 dark:text-gray-200'
+                                            }`}
+                                    >
+                                        {goal.title}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Pagination Dots */}
+                {goals.length > 2 && (
+                    <div className="flex justify-center gap-1.5 mt-[-10px]">
+                        {Array.from({ length: Math.ceil(goals.length / 2) }).map((_, i) => (
+                            <div
+                                key={i}
+                                className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700"
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
