@@ -41,13 +41,13 @@ import {
 } from './errors';
 
 // Utilities
-import { classifyCategory } from './utils/chunkClassifier';
 import {
+  classifyCategory,
   applySuperMemo,
   createInitialState,
+  ensureUUID,
   type RecallQuality
-} from './utils/superMemo';
-import { ensureUUID } from './utils/uuid';
+} from './utils';
 
 /**
  * Statistics summary for the chunk collection.
