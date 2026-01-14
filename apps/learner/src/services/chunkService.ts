@@ -29,7 +29,7 @@ import {
   saveChunk as dbSaveChunk,
   deleteChunk as dbDeleteChunk,
   DatabaseError
-} from './db';
+} from './db/index';
 
 // Error utilities
 import {
