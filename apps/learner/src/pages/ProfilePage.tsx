@@ -6,10 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../components/AuthProvider';
-import { StreakCounter } from '../components/checkin';
-import { CheckinCalendarV2 } from '../components/checkin/CheckinCalendarV2';
+import { StreakCounter, CheckinCalendar } from '../components/checkin';
 import { getUserStats, formatDuration, getUserAchievements, getPracticeHistory } from '../services/p0FeaturesClient';
-import { UserStats, UserAchievement } from '@echospeak/types';
+import { UserStats, UserAchievement, PracticeHistory } from '@echospeak/types';
 
 interface ProfilePageProps {
   onNavigateToSettings?: () => void;
@@ -22,7 +21,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
   const userId = user?.id;
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [achievements, setAchievements] = useState<UserAchievement[]>([]);
-  const [practiceHistory, setPracticeHistory] = useState<any[]>([]);
+  const [practiceHistory, setPracticeHistory] = useState<PracticeHistory[]>([]);
   const [showDevTools, setShowDevTools] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -243,7 +242,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
                 Last 3 Months
               </span>
             </div>
-            <CheckinCalendarV2 userId={userId} useDemoData={process.env.NODE_ENV === 'development'} />
+            <CheckinCalendar userId={userId} useDemoData={process.env.NODE_ENV === 'development'} />
           </div>
         </motion.section>
 

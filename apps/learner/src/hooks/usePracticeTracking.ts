@@ -76,13 +76,10 @@ export function usePracticeTracking(options: UsePracticeTrackingOptions) {
 
       // Check for new achievements
       const newAchievements = await checkAndAwardAchievements(user.id);
-      
-      if (newAchievements.length > 0) {
-        console.log('🎉 New achievements unlocked!', newAchievements);
-        // You can add a toast notification here
-      }
 
-      console.log('✅ Practice session recorded successfully');
+      if (newAchievements.length > 0) {
+        // TODO: Show toast notification for new achievements
+      }
     } catch (error) {
       console.error('Failed to record practice session:', error);
     } finally {
@@ -101,7 +98,6 @@ export function usePracticeTracking(options: UsePracticeTrackingOptions) {
           video_id: options.videoId,
         });
         viewRecordedRef.current = true;
-        console.log('👁️ View recorded for trending');
       } catch (error) {
         console.error('Failed to record view:', error);
       }
@@ -128,8 +124,8 @@ export function usePracticeTracking(options: UsePracticeTrackingOptions) {
               sentences_completed: sessionRef.current.sentencesCompleted,
               sentences_total: sessionRef.current.sentencesTotal,
             };
-            
-            console.log('📊 Auto-saving practice session on unmount:', data);
+            // TODO: Implement beacon request for practice tracking
+            void data;
           }
         }
       }

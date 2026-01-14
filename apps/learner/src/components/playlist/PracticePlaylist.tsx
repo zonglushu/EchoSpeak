@@ -3,7 +3,7 @@
  * Manages user's practice queue with drag-and-drop reordering
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Star, Trash2, Play, GripVertical, Plus, Clock } from 'lucide-react';
 import {
   getPlaylist,
@@ -29,7 +29,7 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
     loadPlaylist();
   }, [userId]);
 
-  const loadPlaylist = async () => {
+  const loadPlaylist = useCallback(async function loadPlaylistItems() {
     if (!userId) return;
 
     setIsLoading(true);
@@ -41,66 +41,68 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId]);
 
-  const handleRemove = async (itemId: string) => {
+  const handleRemove = useCallback(async function removeItem(itemId: string) {
     if (!userId) return;
 
     try {
       await removeFromPlaylist(userId, itemId);
-      setPlaylist(playlist.filter((item) => item.id !== itemId));
+      setPlaylist((prev) => prev.filter((item) => item.id !== itemId));
     } catch (error) {
       console.error('Failed to remove from playlist:', error);
     }
-  };
+  }, [userId]);
 
-  const handleDragStart = (e: React.DragEvent, itemId: string) => {
+  const handleDragStart = useCallback(function dragStart(e: React.DragEvent, itemId: string) {
     setDraggedItem(itemId);
     e.dataTransfer.effectAllowed = 'move';
-  };
+  }, []);
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = useCallback(function dragOver(e: React.DragEvent) {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
-  };
+  }, []);
 
-  const handleDrop = async (e: React.DragEvent, targetItemId: string) => {
+  const handleDrop = useCallback(async function dropItem(e: React.DragEvent, targetItemId: string) {
     e.preventDefault();
 
     if (!userId || !draggedItem || draggedItem === targetItemId) return;
 
-    const newPlaylist = [...playlist];
-    const draggedIndex = newPlaylist.findIndex((item) => item.id === draggedItem);
-    const targetIndex = newPlaylist.findIndex((item) => item.id === targetItemId);
+    setPlaylist((prevPlaylist) => {
+      const newPlaylist = [...prevPlaylist];
+      const draggedIndex = newPlaylist.findIndex((item) => item.id === draggedItem);
+      const targetIndex = newPlaylist.findIndex((item) => item.id === targetItemId);
 
-    if (draggedIndex === -1 || targetIndex === -1) return;
+      if (draggedIndex === -1 || targetIndex === -1) return prevPlaylist;
 
-    // Reorder
-    const [removed] = newPlaylist.splice(draggedIndex, 1);
-    newPlaylist.splice(targetIndex, 0, removed);
+      // Reorder
+      const [removed] = newPlaylist.splice(draggedIndex, 1);
+      newPlaylist.splice(targetIndex, 0, removed);
 
-    // Update sort_order
-    const reorderedItems = newPlaylist.map((item, index) => ({
-      ...item,
-      sort_order: index,
-    }));
+      // Update sort_order
+      const reorderedItems = newPlaylist.map((item, index) => ({
+        ...item,
+        sort_order: index,
+      }));
 
-    setPlaylist(reorderedItems);
+      // Persist to backend
+      reorderPlaylist(userId, reorderedItems.map((item) => item.id)).catch((error) => {
+        console.error('Failed to reorder playlist:', error);
+      });
 
-    try {
-      await reorderPlaylist(userId, reorderedItems.map((item) => item.id));
-    } catch (error) {
-      console.error('Failed to reorder playlist:', error);
-      // Revert on error
-      setPlaylist(playlist);
-    } finally {
-      setDraggedItem(null);
-    }
-  };
-
-  const handleDragEnd = () => {
+      return reorderedItems;
+    });
     setDraggedItem(null);
-  };
+  }, [userId, draggedItem]);
+
+  const handleDragEnd = useCallback(function dragEnd() {
+    setDraggedItem(null);
+  }, []);
+
+  const totalDuration = useMemo(() => {
+    return playlist.reduce((sum, item) => sum + (item.video_duration || 0), 0);
+  }, [playlist]);
 
   if (isLoading) {
     return (
@@ -109,8 +111,6 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
       </div>
     );
   }
-
-  const totalDuration = playlist.reduce((sum, item) => sum + (item.video_duration || 0), 0);
 
   return (
     <div className="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-white/10">
@@ -125,8 +125,7 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
         <button
           className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-all active:scale-95 flex items-center gap-2"
           onClick={() => {
-            // Open video selection modal (to be implemented)
-            console.log('添加到清单');
+            // TODO: Open video selection modal
           }}
         >
           <Plus className="w-4 h-4" />
@@ -150,7 +149,7 @@ export const PracticePlaylist: React.FC<PracticePlaylistProps> = ({ userId, onSt
             <button
               className="px-6 py-2 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-xl transition-all active:scale-95"
               onClick={() => {
-                console.log('浏览视频');
+                // TODO: Navigate to video browser
               }}
             >
               浏览视频

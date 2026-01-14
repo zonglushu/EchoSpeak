@@ -4,8 +4,11 @@ import { AuthProvider } from './components/AuthProvider';
 import AppAuth from './AppAuth';
 import { PWAInstallPrompt } from './components/PWAInstallPrompt';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { AsyncErrorBoundary } from './components/AsyncErrorBoundary';
 import { supabase } from './lib/supabase';
 import { initP0Features } from '@echospeak/services';
+import { logError } from './services/errors';
 import './index.css';
 import '@echospeak/ui/theme.css';
 import './i18n';
@@ -20,7 +23,6 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
       const registration = await navigator.serviceWorker.register('/sw.js', {
         type: 'module'
       });
-      console.log('SW registered: ', registration);
 
       // 监听 Service Worker 更新
       registration.addEventListener('updatefound', () => {
@@ -29,8 +31,6 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
           newWorker.addEventListener('statechange', () => {
             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
               // 有新版本可用，提示用户刷新
-              console.log('New version available. Please refresh the page.');
-              // 可以添加自定义 UI 提示用户刷新
               if (confirm('发现新版本，是否立即更新？')) {
                 window.location.reload();
               }
@@ -50,12 +50,42 @@ if (!rootElement) {
 }
 
 const root = ReactDOM.createRoot(rootElement);
+
+// Global error handler for unhandled promise rejections
+window.addEventListener('unhandledrejection', (event) => {
+  logError(event.reason, 'unhandledRejection');
+});
+
+// Global error handler for uncaught errors
+window.addEventListener('error', (event) => {
+  logError(event.error, 'uncaughtError');
+});
+
 root.render(
   <React.StrictMode>
-    <OfflineIndicator />
-    <AuthProvider>
-      <AppAuth />
-      <PWAInstallPrompt />
-    </AuthProvider>
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        logError(error, 'RootErrorBoundary');
+        // In production, you might want to send this to an error tracking service
+        if (import.meta.env.PROD) {
+          console.error('[RootErrorBoundary]', error, errorInfo);
+        }
+      }}
+    >
+      <AsyncErrorBoundary
+        onAsyncError={(error) => {
+          logError(error, 'RootAsyncErrorBoundary');
+          if (import.meta.env.PROD) {
+            console.error('[RootAsyncErrorBoundary]', error);
+          }
+        }}
+      >
+        <OfflineIndicator />
+        <AuthProvider>
+          <AppAuth />
+          <PWAInstallPrompt />
+        </AuthProvider>
+      </AsyncErrorBoundary>
+    </ErrorBoundary>
   </React.StrictMode>
 );

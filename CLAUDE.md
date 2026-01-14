@@ -66,6 +66,14 @@ packages/
   services/         # Gemini API wrappers (@echospeak/services)
   types/            # Shared TypeScript types (@echospeak/types)
   config/           # Tailwind preset, ESLint/TS baselines (@echospeak/config)
+skills/             # Claude Code skills for domain expertise
+  learner-end/      # Learner app user personas and scenarios
+    ├── SKILL.md
+    ├── references/
+    └── dist/       # Skill distribution package
+      └── learner-end.skill
+  admin-end/        # Admin app workflows and patterns (to be added)
+docs/               # Project documentation
 ```
 
 ### Package Dependencies
@@ -114,6 +122,30 @@ Provides:
 - `tailwindPreset`: Shared design tokens (colors, spacing, typography)
 - ESLint and TypeScript baseline configurations
 - Inherited by all apps and packages to ensure consistency
+
+### Claude Code Skills (`skills/`)
+Domain expertise packages for Claude Code AI assistant:
+
+**Available Skills**:
+- `learner-end`: User personas and learning scenarios for the learner app
+  - Three user archetypes: Working Professionals, Exam Preppers, Casual Learners
+  - Three learning modes: Companion Input, Intensive Interaction, Reflective Consolidation
+  - User journey examples and design principles
+
+**Skill Structure**:
+- Each skill has a `SKILL.md` with metadata and quick reference
+- Detailed documentation in `references/` subdirectory
+- Packaged as `.skill` files in the skill's own `dist/` directory
+- Each skill is a self-contained unit (source + distribution)
+
+**When Skills Are Used**:
+Claude automatically triggers relevant skills when:
+- Designing features for specific user segments
+- Writing user stories or acceptance criteria
+- Making product decisions
+- Implementing domain-specific workflows
+
+See [`docs/README.md`](docs/README.md#08-skills) for complete skills documentation.
 
 ## Environment Variables
 

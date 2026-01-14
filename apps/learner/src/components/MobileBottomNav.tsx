@@ -1,6 +1,6 @@
 import React from 'react';
 import { Home, BookOpen, Mic, Heart, User } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 export type TabType = 'home' | 'learn' | 'practice' | 'favorites' | 'profile';
@@ -25,101 +25,82 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
     { id: 'favorites' as TabType, label: t('nav.favorites'), icon: Heart },
     { id: 'profile' as TabType, label: t('nav.profile'), icon: User },
   ];
+
   return (
     <nav
       className={`
         lg:hidden
-        fixed bottom-0 left-0 right-0 z-50
-        bg-white/95 backdrop-blur-3xl
-        border-t border-gray-100/50
-        pb-safe
-        dark:bg-gray-950/95 dark:border-gray-800/50
+        fixed bottom-6 left-4 right-4 z-50
         ${className}
       `}
     >
-      <div className="flex items-center justify-around h-16 px-4 relative">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          const isPractice = tab.id === 'practice';
+      {/* Glassmorphism Floating Dock */}
+      <div className="
+        max-w-md mx-auto
+        bg-white/90 dark:bg-gray-900/90
+        backdrop-blur-xl
+        border border-white/30 dark:border-gray-700/50
+        rounded-[1.5rem]
+        shadow-2xl shadow-gray-900/10 dark:shadow-black/30
+        px-2.5 py-3
+        relative
+        overflow-hidden
+      ">
+        {/* Ambient Glow Effect */}
+        <div className="
+          absolute inset-0 bg-gradient-to-br from-teal-500/5 to-emerald-500/5
+          pointer-events-none
+        " />
 
-          if (isPractice) {
+        <div className="flex items-center justify-around gap-1 relative z-10">
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+
             return (
-              <div key={tab.id} className="relative -top-5 flex flex-col items-center">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => onTabChange(tab.id)}
-                  className={`
-                    w-14 h-14 rounded-full
-                    bg-gradient-to-br from-teal-400 to-cyan-600
-                    flex items-center justify-center
-                    shadow-[0_8px_20px_-4px_rgba(20,184,166,0.4)]
-                    border-4 border-white dark:border-gray-950
-                    relative z-20
-                  `}
-                >
-                  <Icon className="w-7 h-7 text-white" strokeWidth={2.5} />
-                </motion.button>
-                <span className={`
-                  text-[10px] font-black mt-2 tracking-widest uppercase
-                  transition-colors duration-200
-                  ${isActive ? 'text-teal-600 dark:text-teal-400' : 'text-gray-400 dark:text-gray-500'}
-                `}>
-                  {tab.label}
-                </span>
-                {isActive && (
-                  <motion.div
-                    layoutId="activeIndicator"
-                    className="absolute -bottom-1 w-1.5 h-1.5 bg-teal-600 dark:bg-teal-400 rounded-full"
-                  />
-                )}
-              </div>
-            );
-          }
-
-          return (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id)}
-              className={`
-                flex flex-col items-center justify-center
-                flex-1 h-full
-                transition-all duration-200
-                relative
-                ${isActive ? 'text-teal-600 dark:text-teal-400' : 'text-gray-400 hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400'}
-              `}
-            >
-              <div
+              <button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
                 className={`
-                  relative flex items-center justify-center
-                  transition-all duration-200
-                  ${isActive ? 'scale-110 -translate-y-1' : 'scale-100 translate-y-0'}
+                  relative flex flex-col items-center justify-center
+                  w-14 h-14 rounded-2xl
+                  transition-all duration-300
+                  group
+                  ${isActive
+                    ? 'bg-gradient-to-br from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-500/30'
+                    : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-white/50 dark:hover:bg-gray-800/50'
+                  }
                 `}
+                aria-label={tab.label}
+                aria-current={isActive ? 'page' : undefined}
               >
-                <Icon className="w-6 h-6" strokeWidth={isActive ? 2.5 : 2} />
-              </div>
-              <span
-                className={`
-                  text-[10px] font-black mt-1.5 tracking-tighter uppercase
-                  transition-all duration-200
-                  ${isActive ? 'opacity-100' : 'opacity-60'}
-                `}
-              >
-                {tab.label}
-              </span>
-              {isActive && !isPractice && (
-                <motion.div
-                  layoutId="activeIndicator"
-                  className="absolute bottom-2 w-1.5 h-1.5 bg-teal-600 dark:bg-teal-400 rounded-full"
+                {/* Icon */}
+                <Icon
+                  className="w-6 h-6 transition-transform duration-300 group-hover:scale-110"
+                  strokeWidth={2.5}
                 />
-              )}
-            </button>
-          );
-        })}
+
+                {/* Active Glow Effect */}
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="absolute inset-0 bg-gradient-to-br from-teal-500 to-emerald-500 rounded-2xl opacity-20 blur-xl"
+                    />
+                  )}
+                </AnimatePresence>
+
+                {/* Inner Shine Effect */}
+                {isActive && (
+                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
-      {/* Safe area for iPhone notch */}
-      <div className="h-safe-area-inset-bottom" />
     </nav>
   );
 };

@@ -1,6 +1,6 @@
 # EchoSpeak 文档中心
 
-> 最后更新：2026年1月2日
+> 最后更新：2026年1月13日
 
 本目录包含 EchoSpeak 项目的所有技术文档，按功能和阶段分类。
 
@@ -58,6 +58,54 @@ API 接口文档和调用说明（待补充）。
 - **`auth-fixes-complete.md`** - 认证修复详细记录（已完成）
 - **`login-troubleshooting.md`** - 登录问题排查（已解决）
 
+### 🤖 08-skills（Claude 技能）
+Claude Code 技能定义文档，存放于项目根目录 `skills/`。
+
+> **什么是技能？** 技能是为 Claude Code 提供领域知识和工作流程的可扩展包，让 Claude 从通用助手变为特定领域的专家助手。
+
+#### 技能列表
+
+- **`learner-end`** - Learner 端用户画像与学习场景
+  - 用户画像：职场进阶者、备考学生、兴趣/旅游党
+  - 学习模式：伴随式听感输入、高频交互实战、思维内化与重构
+  - 用户旅程：完整的用户使用流程示例
+
+#### 技能结构
+
+```
+skills/
+├── learner-end/          # 技能源码（可编辑）
+│   ├── SKILL.md          # 技能主文件（元数据 + 快速参考）
+│   ├── references/       # 详细参考文档
+│   │   ├── personas.md
+│   │   ├── learning-modes.md
+│   │   └── journeys.md
+│   └── dist/             # 该技能的分发包
+│       └── learner-end.skill
+└── admin-end/            # 管理端技能（待添加）
+    ├── SKILL.md
+    ├── references/
+    └── dist/
+        └── admin-end.skill
+```
+
+#### 使用技能
+
+当 Claude 遇到相关问题时会自动触发：
+- 设计 learner 端功能 → `learner-end` 技能
+- 编写用户故事 → `learner-end` 技能
+- 产品决策 → `learner-end` 技能
+
+#### 创建新技能
+
+1. 在 `skills/` 下创建新文件夹
+2. 编写 `SKILL.md`（遵循 [skill-creator](https://github.com/anthropics/anthropic-agent-skills) 模板）
+3. 添加 `references/` 存放详细参考文档
+4. 在技能文件夹内创建 `dist/` 并打包为 `.skill` 文件
+5. 更新本 README
+
+参考文档：[CLAUDE.md](../CLAUDE.md)（项目根目录）
+
 ---
 
 ## 🚀 快速导航
@@ -113,6 +161,7 @@ API 接口文档和调用说明（待补充）。
 | 05-api | 0 | 📝 待补充 |
 | 06-deployment | 0 | 📝 待补充 |
 | 07-archive | 3 | 📦 归档 |
+| 08-skills | 1 | 🚧 增长中 |
 
 ---
 

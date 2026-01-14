@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { TrendingUp, Eye, Flame, ThumbsUp, ChevronRight } from 'lucide-react';
 import { getTrendingContent, recordView } from '../../services/p0FeaturesClient';
 import { TrendingItem } from '@echospeak/types';
@@ -26,7 +26,7 @@ export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
     loadTrendingContent();
   }, [selectedPeriod]);
 
-  const loadTrendingContent = async () => {
+  const loadTrendingContent = useCallback(async function loadTrendingItems() {
     setIsLoading(true);
     try {
       const items = await getTrendingContent(selectedPeriod);
@@ -36,9 +36,9 @@ export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedPeriod]);
 
-  const handleSelectVideo = async (item: TrendingItem) => {
+  const handleSelectVideo = useCallback(async function selectVideo(item: TrendingItem) {
     const videoId = (item.asset_id || item.video_id) as string;
     if (!videoId) return;
 
@@ -56,18 +56,18 @@ export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
     }
 
     onSelectVideo?.(videoId);
-  };
+  }, [userId, onSelectVideo]);
 
-  const getRankIcon = (rank: number): string => {
+  const getRankIcon = useCallback(function getRankIconForCard(rank: number): string {
     switch (rank) {
       case 1: return '🥇';
       case 2: return '🥈';
       case 3: return '🥉';
       default: return '🏅';
     }
-  };
+  }, []);
 
-  const getCardBg = (rank: number): string => {
+  const getCardBg = useCallback(function getCardBackground(rank: number): string {
     switch (rank) {
       case 1:
         return 'bg-[#FFFBEB] dark:bg-yellow-900/10 border-[#FEF3C7] dark:border-yellow-800/50 shadow-sm';
@@ -78,7 +78,7 @@ export const TrendingLeaderboard: React.FC<TrendingLeaderboardProps> = ({
       default:
         return 'bg-white dark:bg-slate-900/50 border-gray-100 dark:border-white/5 shadow-sm';
     }
-  };
+  }, []);
 
   return (
     <div className="py-4">

@@ -1,19 +1,25 @@
 /**
- * P0-1: 紧凑版连续打卡组件
- * 适用于HomePage顶部的轻量级显示
+ * P0-1: Compact Streak Counter Component
+ * Lightweight inline display for use in headers and navigation
+ * Supports i18n and provides minimal UI for streak visualization
  */
 
 import React, { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
-import { getUserCheckins, recordCheckin, getCheckinCalendar } from '../../services/p0FeaturesClient';
+import { getUserCheckins, recordCheckin } from '../../services/p0FeaturesClient';
 import { UserCheckin } from '@echospeak/types';
+import { useTranslation } from 'react-i18next';
 
 interface StreakCounterCompactProps {
   userId?: string;
   onCheckin?: (checkin: UserCheckin) => void;
 }
 
-export const StreakCounterCompact: React.FC<StreakCounterCompactProps> = ({ userId, onCheckin }) => {
+export const StreakCounterCompact: React.FC<StreakCounterCompactProps> = ({
+  userId,
+  onCheckin
+}) => {
+  const { t } = useTranslation();
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [hasCheckedInToday, setHasCheckedInToday] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -24,45 +30,53 @@ export const StreakCounterCompact: React.FC<StreakCounterCompactProps> = ({ user
     loadTodayCheckin();
   }, [userId]);
 
-  const loadTodayCheckin = async () => {
+  function loadTodayCheckin() {
     if (!userId) return;
 
     setIsLoading(true);
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      const checkins = await getUserCheckins(userId, 1);
 
-      if (checkins.length > 0 && checkins[0].checkin_date === today) {
-        setHasCheckedInToday(true);
-        setCurrentStreak(checkins[0].streak_count);
-      } else {
-        const allCheckins = await getUserCheckins(userId, 2);
-        if (allCheckins.length > 0) {
-          setCurrentStreak(allCheckins[0].streak_count);
+    const today = new Date().toISOString().split('T')[0];
+
+    getUserCheckins(userId, 1)
+      .then((checkins) => {
+        if (checkins.length > 0 && checkins[0].checkin_date === today) {
+          setHasCheckedInToday(true);
+          setCurrentStreak(checkins[0].streak_count);
+        } else {
+          return getUserCheckins(userId, 2);
         }
-      }
-    } catch (error) {
-      console.error('Failed to load check-in data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      })
+      .then((checkins) => {
+        if (checkins && checkins.length > 0) {
+          setCurrentStreak(checkins[0].streak_count);
+        }
+      })
+      .catch((error) => {
+        console.error('Failed to load check-in data:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
 
-  const handleCheckin = async () => {
+  function handleCheckin() {
     if (!userId || hasCheckedInToday) return;
 
-    try {
-      setIsAnimating(true);
-      const checkin = await recordCheckin(userId, 0, 0);
-      setCurrentStreak(checkin.streak_count);
-      setHasCheckedInToday(true);
+    setIsAnimating(true);
 
-      setTimeout(() => setIsAnimating(false), 1000);
-      onCheckin?.(checkin);
-    } catch (error) {
-      console.error('Check-in failed:', error);
-    }
-  };
+    recordCheckin(userId, 0, 0)
+      .then((checkin) => {
+        setCurrentStreak(checkin.streak_count);
+        setHasCheckedInToday(true);
+
+        setTimeout(() => setIsAnimating(false), 1000);
+        onCheckin?.(checkin);
+      })
+      .catch((error) => {
+        console.error('Check-in failed:', error);
+        setIsAnimating(false);
+      });
+  }
 
   if (isLoading) {
     return (
@@ -81,7 +95,7 @@ export const StreakCounterCompact: React.FC<StreakCounterCompactProps> = ({ user
           : 'bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30'
       } rounded-full pr-1 transition-all ${isAnimating ? 'scale-105' : ''}`}
     >
-      {/* 火焰图标 */}
+      {/* Flame icon */}
       <div className={`relative ${isAnimating ? 'animate-bounce' : ''}`}>
         <Flame
           className={`w-4 h-4 ${
@@ -95,24 +109,24 @@ export const StreakCounterCompact: React.FC<StreakCounterCompactProps> = ({ user
         />
       </div>
 
-      {/* 连续天数 */}
+      {/* Streak count */}
       {currentStreak > 0 && (
         <span className="text-sm font-bold text-gray-900 dark:text-white">
-          {currentStreak}天
+          {currentStreak}{t('common.days')}
         </span>
       )}
 
-      {/* 打卡按钮 */}
+      {/* Check-in button */}
       {!hasCheckedInToday ? (
         <button
           onClick={handleCheckin}
           className="px-2 py-0.5 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white text-xs font-bold rounded-full transition-all active:scale-95 shadow-md"
         >
-          打卡
+          {t('streak.checkIn')}
         </button>
       ) : (
         <span className="px-2 py-0.5 bg-green-500/20 text-green-700 dark:text-green-400 text-xs font-bold rounded-full">
-          ✓
+          {t('streak.done')}
         </span>
       )}
     </div>

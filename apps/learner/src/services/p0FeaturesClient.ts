@@ -579,7 +579,6 @@ export function formatDuration(seconds: number): string {
  */
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
   if (!('Notification' in window)) {
-    console.warn('This browser does not support notifications');
     return 'denied';
   }
 
@@ -600,13 +599,12 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
  */
 export function showNotification(title: string, options?: NotificationOptions) {
   if (!('Notification' in window)) {
-    console.warn('This browser does not support notifications');
     return;
   }
 
   if (Notification.permission === 'granted') {
     new Notification(title, {
-      icon: '/icon-192x192.png', // Update with your app icon
+      icon: '/icon-192x192.png',
       badge: '/badge-72x72.png',
       ...options,
     });
@@ -628,7 +626,6 @@ export function scheduleDailyReminder(hour: number = 20, minute: number = 0) {
     0
   );
 
-  // If the time has passed today, schedule for tomorrow
   if (scheduledTime <= now) {
     scheduledTime.setDate(scheduledTime.getDate() + 1);
   }
@@ -642,9 +639,6 @@ export function scheduleDailyReminder(hour: number = 20, minute: number = 0) {
       requireInteraction: false,
     });
 
-    // Schedule next day's reminder
     scheduleDailyReminder(hour, minute);
   }, timeUntilReminder);
-
-  console.log(`Daily reminder scheduled for ${scheduledTime.toLocaleString()}`);
 }

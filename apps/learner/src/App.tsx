@@ -3,6 +3,14 @@ import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, X, Languages } from 'lucide-react';
 import { TranscriptLine, PlaybackState, MediaAsset } from '@echospeak/types';
+import type {
+  YouTubePlayer,
+  YouTubePlayerRef,
+  YouTubePlayerReadyEvent,
+  YouTubePlayerStateEvent,
+  IDBVersionChangeEvent,
+  IDBOpenDBRequest,
+} from '../types/youtube';
 import { INITIAL_TRANSCRIPT } from './constants';
 import { generateProsodyNotation, bilingualizeText } from '@echospeak/services';
 import { HomePage } from './pages/HomePage';
@@ -14,9 +22,17 @@ import { HelpPage } from './pages/HelpPage';
 import { SubscriptionPage } from './pages/SubscriptionPage';
 import { LearnPage } from './pages/LearnPage';
 import { PracticePage } from './pages/PracticePage';
-import { DashboardPage } from './pages/DashboardPage';
+import DashboardPage from './pages/DashboardPage';
+import LearningModesPage from './pages/LearningModesPage';
+import FlowPage from './pages/FlowPage';
+import BattlePage from './pages/BattlePage';
+import ThinkPage from './pages/ThinkPage';
+import FlowModeFeed from './pages/FlowModeFeed';
+import BattleModeFeed from './pages/BattleModeFeed';
+import ThinkModeFeed from './pages/ThinkModeFeed';
 import { MobileBottomNav, TabType } from './components/MobileBottomNav';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { ChunkProvider } from './contexts/ChunkContext';
 import { OnboardingFlow, useOnboarding } from './components/OnboardingFlow';
 
 const DB_NAME = 'EchoSpeakStudioDB_v3';
@@ -25,9 +41,9 @@ const LAST_ASSET_KEY = 'echo_speak_last_youtube_id';
 
 const openDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onupgradeneeded = (e: any) => {
-      const db = e.target.result;
+    const request: IDBOpenDBRequest = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = (e: IDBVersionChangeEvent) => {
+      const db = (e.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: 'id' });
       }
@@ -65,7 +81,6 @@ const extractYouTubeId = (url: string): string | null => {
 
 const fetchYouTubeCaptions = async (videoId: string): Promise<TranscriptLine[]> => {
   try {
-    console.log('[字幕] 开始请求后端 API 获取字幕...', videoId);
     const apiUrl = process.env.ADMIN_API_URL || 'http://localhost:3000';
     const response = await fetch(`${apiUrl}/api/youtube/captions?videoId=${videoId}`);
     if (!response.ok) {
@@ -75,10 +90,8 @@ const fetchYouTubeCaptions = async (videoId: string): Promise<TranscriptLine[]> 
     }
     const data = await response.json();
     if (!data.success || !data.lines || data.lines.length === 0) {
-      console.log('[字幕] 未找到字幕数据');
       return [];
     }
-    console.log(`[字幕] 成功获取 ${data.lines.length} 条字幕`);
     return data.lines;
   } catch (error) {
     console.error('[字幕] 请求失败:', error);
@@ -127,7 +140,7 @@ const AppContent: React.FC = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const hasGeminiApiKey = Boolean(process.env.API_KEY || process.env.GEMINI_API_KEY);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<YouTubePlayer | null>(null);
   const syncIntervalRef = useRef<number | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -166,12 +179,11 @@ const AppContent: React.FC = () => {
   }, [transcript]);
 
   // YouTube 播放器回调
-  const onPlayerReady = (event: any) => {
-    playerRef.current = event.target;
-    console.log('[YouTube] 播放器就绪');
+  const onPlayerReady = (event: YouTubePlayerReadyEvent) => {
+    playerRef.current = event.target.player ?? null;
   };
 
-  const onPlayerStateChange = (event: any) => {
+  const onPlayerStateChange = (event: YouTubePlayerStateEvent) => {
     const state = event.data;
     if (state === 1) {
       setPlaybackState(PlaybackState.PLAYING);
@@ -418,11 +430,18 @@ const AppContent: React.FC = () => {
               <Route path="/learn" element={<LearnPage />} />
               <Route path="/practice" element={<PracticePage />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/learning-modes" element={<LearningModesPage />} />
+              <Route path="/flow" element={<FlowPage />} />
+              <Route path="/battle" element={<BattlePage />} />
+              <Route path="/think" element={<ThinkPage />} />
               <Route path="/discover" element={<DiscoverPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/subscription" element={<SubscriptionPage />} />
+              <Route path="/mode/flow" element={<FlowModeFeed />} />
+              <Route path="/mode/battle" element={<BattleModeFeed />} />
+              <Route path="/mode/think" element={<ThinkModeFeed />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
@@ -448,9 +467,11 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <Router>
-        <AppContent />
-      </Router>
+      <ChunkProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </ChunkProvider>
     </ThemeProvider>
   );
 };

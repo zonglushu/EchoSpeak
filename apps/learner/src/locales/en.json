@@ -16,6 +16,21 @@
         "tasks": "Tasks",
         "minsLeft": "mins left"
     },
+    "errors": {
+        "title": "Oops! Something went wrong",
+        "unknown": "An unexpected error occurred. Please try again.",
+        "network": "Network connection failed. Please check your internet connection.",
+        "timeout": "Request timed out. Please try again.",
+        "validation": "Invalid input. Please check your data and try again.",
+        "notFound": "The requested resource was not found.",
+        "database": "Failed to access local database. Please try again.",
+        "retry": "Retry",
+        "goBack": "Go Back",
+        "goHome": "Go Home",
+        "contactSupport": "If the problem persists, please contact support.",
+        "details": "Error Details",
+        "retrying": "Retrying..."
+    },
     "calendar": {
         "title": "Learning Calendar",
         "recentMonths": "Last {{count}} months check-in",

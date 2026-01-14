@@ -3,6 +3,11 @@ import { Play, Pause, Tv, Loader2, BrainCircuit, Mic, Type, EyeOff } from 'lucid
 import { TranscriptLine, PlaybackState } from '@echospeak/types';
 import { ProsodyRenderer } from '@echospeak/ui';
 import YouTube from 'react-youtube';
+import type {
+  YouTubePlayer,
+  YouTubePlayerReadyEvent,
+  YouTubePlayerStateEvent,
+} from '../types/youtube';
 
 interface MobileHomeLayoutProps {
   currentVideoId: string | null;
@@ -14,9 +19,9 @@ interface MobileHomeLayoutProps {
   activeId: string;
   onActiveLineChange: (id: string) => void;
   playbackState: PlaybackState;
-  playerRef: React.RefObject<any>;
-  onPlayerReady: (event: any) => void;
-  onPlayerStateChange: (event: any) => void;
+  playerRef: React.RefObject<YouTubePlayer | null>;
+  onPlayerReady: (event: YouTubePlayerReadyEvent) => void;
+  onPlayerStateChange: (event: YouTubePlayerStateEvent) => void;
   notationProgress: { current: number; total: number };
   isImporting: boolean;
   feedback: string | null;

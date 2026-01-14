@@ -2,10 +2,28 @@
 import { supabase } from '../lib/supabase';
 
 /**
+ * Supabase user metadata type
+ */
+interface UserMetadata {
+  full_name?: string;
+  tier?: 'free' | 'pro' | 'premium';
+  avatar_url?: string;
+}
+
+/**
+ * Supabase user type
+ */
+interface SupabaseUser {
+  id: string;
+  email: string;
+  user_metadata: UserMetadata;
+}
+
+/**
  * 用户菜单组件
  */
 export function UserMenu() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {

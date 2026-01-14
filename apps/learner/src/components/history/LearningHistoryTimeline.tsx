@@ -3,7 +3,7 @@
  * Displays practice sessions grouped by date with progress visualization
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Clock, TrendingUp, PlayCircle } from 'lucide-react';
 import { getPracticeHistory, formatDuration } from '../../services/p0FeaturesClient';
 import { PracticeHistory } from '@echospeak/types';
@@ -31,24 +31,26 @@ export const LearningHistoryTimeline: React.FC<LearningHistoryTimelineProps> = (
   useEffect(() => {
     if (!userId) return;
     loadHistory();
-  }, [userId, days]);
+  }, [userId, days, loadHistory]);
 
-  const loadHistory = async () => {
+  const loadHistory = useCallback(async function loadHistoryData() {
     if (!userId) return;
 
     setIsLoading(true);
     try {
       const history = await getPracticeHistory(userId, days);
-      const grouped = groupHistoryByDate(history);
-      setGroupedHistory(grouped);
+      setGroupedHistory((current) => {
+        const grouped = groupHistoryByDateInternal(history);
+        return grouped;
+      });
     } catch (error) {
       console.error('Failed to load history:', error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [userId, days]);
 
-  const groupHistoryByDate = (history: PracticeHistory[]): GroupedHistory[] => {
+  const groupHistoryByDateInternal = useCallback(function groupHistoryByDateFn(history: PracticeHistory[]): GroupedHistory[] {
     const grouped = new Map<string, GroupedHistory>();
 
     history.forEach((session) => {
@@ -71,9 +73,9 @@ export const LearningHistoryTimeline: React.FC<LearningHistoryTimelineProps> = (
     return Array.from(grouped.values()).sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
-  };
+  }, []);
 
-  const formatDate = (dateStr: string): string => {
+  const formatDate = useCallback(function formatDateInternal(dateStr: string): string {
     const date = new Date(dateStr);
     const today = new Date();
     const yesterday = new Date(today);
@@ -91,21 +93,30 @@ export const LearningHistoryTimeline: React.FC<LearningHistoryTimelineProps> = (
       day: 'numeric',
       weekday: 'short',
     });
-  };
+  }, []);
 
-  const getProgressColor = (percentage: number): string => {
+  const getProgressColor = useCallback(function getProgressColorInternal(percentage: number): string {
     if (percentage >= 80) return 'bg-green-500';
     if (percentage >= 50) return 'bg-yellow-500';
     return 'bg-slate-600';
-  };
+  }, []);
 
-  const getWeekRange = (): string => {
+  const getWeekRange = useCallback(function getWeekRangeInternal(): string {
     const today = new Date();
     const weekAgo = new Date(today);
     weekAgo.setDate(weekAgo.getDate() - days);
 
     return `${weekAgo.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-  };
+  }, [days]);
+
+  // Memoize expensive statistics calculations
+  const { totalDuration, totalSessions, totalSentences } = useMemo(() => {
+    return {
+      totalDuration: groupedHistory.reduce((sum, g) => sum + g.totalDuration, 0),
+      totalSessions: groupedHistory.reduce((sum, g) => sum + g.sessions.length, 0),
+      totalSentences: groupedHistory.reduce((sum, g) => sum + g.totalSentences, 0),
+    };
+  }, [groupedHistory]);
 
   if (isLoading) {
     return (
@@ -114,11 +125,6 @@ export const LearningHistoryTimeline: React.FC<LearningHistoryTimelineProps> = (
       </div>
     );
   }
-
-  // Calculate totals
-  const totalDuration = groupedHistory.reduce((sum, g) => sum + g.totalDuration, 0);
-  const totalSessions = groupedHistory.reduce((sum, g) => sum + g.sessions.length, 0);
-  const totalSentences = groupedHistory.reduce((sum, g) => sum + g.totalSentences, 0);
 
   return (
     <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">

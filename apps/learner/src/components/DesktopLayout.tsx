@@ -4,6 +4,11 @@ import { TranscriptLine, PlaybackState } from '@echospeak/types';
 import { ProsodyRenderer, NotationLegend } from '@echospeak/ui';
 import { NOTATION_GUIDE } from '../constants';
 import YouTube from 'react-youtube';
+import type {
+  YouTubePlayer,
+  YouTubePlayerReadyEvent,
+  YouTubePlayerStateEvent,
+} from '../types/youtube';
 
 interface DesktopLayoutProps {
   currentVideoId: string | null;
@@ -15,9 +20,9 @@ interface DesktopLayoutProps {
   activeId: string;
   onActiveLineChange: (id: string) => void;
   playbackState: PlaybackState;
-  playerRef: React.RefObject<any>;
-  onPlayerReady: (event: any) => void;
-  onPlayerStateChange: (event: any) => void;
+  playerRef: React.RefObject<YouTubePlayer | null>;
+  onPlayerReady: (event: YouTubePlayerReadyEvent) => void;
+  onPlayerStateChange: (event: YouTubePlayerStateEvent) => void;
   notationProgress: { current: number; total: number };
   isImporting: boolean;
   feedback: string | null;

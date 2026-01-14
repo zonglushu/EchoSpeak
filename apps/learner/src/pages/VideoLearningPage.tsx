@@ -1,10 +1,15 @@
-﻿import React, { useEffect, useState } from 'react';
-import { Tv, Loader2, BrainCircuit, Type, EyeOff, ArrowLeft, CheckCircle, Gauge } from 'lucide-react';
+﻿import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { Tv, Loader2, BrainCircuit, Type, EyeOff, ArrowLeft, CheckCircle, Gauge, ChevronDown } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TranscriptLine, PlaybackState } from '@echospeak/types';
 import { ProsodyRenderer } from '@echospeak/ui';
 import YouTube from 'react-youtube';
 import { usePracticeTracking } from '../hooks/usePracticeTracking';
+import type {
+  YouTubePlayer,
+  YouTubePlayerReadyEvent,
+  YouTubePlayerStateEvent,
+} from '../types/youtube';
 
 interface VideoLearningPageProps {
   videoId?: string;
@@ -12,9 +17,9 @@ interface VideoLearningPageProps {
   activeId: string;
   onActiveLineChange: (id: string) => void;
   playbackState: PlaybackState;
-  playerRef: React.RefObject<any>;
-  onPlayerReady: (event: any) => void;
-  onPlayerStateChange: (event: any) => void;
+  playerRef: React.RefObject<YouTubePlayer | null>;
+  onPlayerReady: (event: YouTubePlayerReadyEvent) => void;
+  onPlayerStateChange: (event: YouTubePlayerStateEvent) => void;
   notationProgress: { current: number; total: number };
   isImporting: boolean;
   feedback: string | null;
@@ -56,11 +61,25 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
   const params = useParams();
   const currentVideoId = params.id || videoId;
 
-  const videoData = currentVideoId ? mockVideoData[currentVideoId] || mockVideoData['video-1'] : null;
+  const videoData = useMemo(() => {
+    return currentVideoId ? mockVideoData[currentVideoId] || mockVideoData['video-1'] : null;
+  }, [currentVideoId]);
+
   const youtubeVideoId = videoData?.youtubeId || '';
 
   // Track practiced sentences
   const [practicedSentences, setPracticedSentences] = useState<Set<string>>(new Set());
+
+  // Mode selector state
+  const [showModeMenu, setShowModeMenu] = useState(false);
+  const [currentMode, setCurrentMode] = useState<'normal' | 'flow' | 'battle' | 'think'>('normal');
+
+  const modes = useMemo(() => [
+    { id: 'normal', name: 'Normal', emoji: '🎬', description: '普通模式' },
+    { id: 'flow', name: 'Flow', emoji: '🌊', description: '伴随输入' },
+    { id: 'battle', name: 'Battle', emoji: '⚔️', description: '实战练习' },
+    { id: 'think', name: 'Think', emoji: '💡', description: '思维内化' },
+  ] as const, []);
 
   // Initialize practice tracking
   const { startPractice, updateProgress, endPractice, isTracking } = usePracticeTracking({
@@ -91,13 +110,15 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
     };
   }, [endPractice]);
 
-  const activeLine = transcript.find((line) => line.id === activeId);
+  const activeLine = useMemo(() => {
+    return transcript.find((line) => line.id === activeId);
+  }, [transcript, activeId]);
 
   // Playback speed control
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
-  const speedOptions = [0.75, 1, 1.25, 1.5];
+  const speedOptions = useMemo(() => [0.75, 1, 1.25, 1.5], []);
 
-  const handleSpeedChange = () => {
+  const handleSpeedChange = useCallback(() => {
     const currentIndex = speedOptions.indexOf(playbackSpeed);
     const nextIndex = (currentIndex + 1) % speedOptions.length;
     const newSpeed = speedOptions[nextIndex];
@@ -105,9 +126,9 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
     if (playerRef.current) {
       playerRef.current.setPlaybackRate(newSpeed);
     }
-  };
+  }, [speedOptions, playbackSpeed, playerRef]);
 
-  const opts = {
+  const opts = useMemo(() => ({
     height: '100%',
     width: '100%',
     playerVars: {
@@ -117,7 +138,7 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
       rel: 0,
       modestbranding: 1,
     },
-  };
+  }), []);
 
   return (
     <div className="min-h-screen bg-background text-text-primary pb-24 dark:bg-dark-background dark:text-dark-text-primary">
@@ -130,6 +151,52 @@ export const VideoLearningPage: React.FC<VideoLearningPageProps> = ({
           >
             <ArrowLeft className="w-5 h-5 text-text-secondary dark:text-dark-text-secondary" />
           </button>
+
+          {/* 模式选择器 */}
+          <div className="relative">
+            <button
+              onClick={() => setShowModeMenu(!showModeMenu)}
+              className="flex items-center gap-2 px-3 py-2 bg-surface border border-border rounded-xl hover:bg-surface-hover transition-all dark:bg-dark-surface dark:border-dark-border dark:hover:bg-dark-surface-hover"
+            >
+              <span className="text-lg">{modes.find(m => m.id === currentMode)?.emoji}</span>
+              <span className="text-xs font-bold text-text-secondary dark:text-dark-text-secondary">
+                {modes.find(m => m.id === currentMode)?.name}
+              </span>
+              <ChevronDown className={`w-4 h-4 text-text-tertiary transition-transform dark:text-dark-text-tertiary ${showModeMenu ? 'rotate-180' : ''}`} />
+            </button>
+
+            {/* 模式下拉菜单 */}
+            {showModeMenu && (
+              <div className="absolute top-full left-0 mt-2 w-48 bg-surface border border-border rounded-xl shadow-xl overflow-hidden dark:bg-dark-surface dark:border-dark-border">
+                {modes.map((mode) => (
+                  <button
+                    key={mode.id}
+                    onClick={() => {
+                      setCurrentMode(mode.id);
+                      setShowModeMenu(false);
+                      // Navigate to mode page
+                      if (mode.id !== 'normal') {
+                        navigate(`/${mode.id}`);
+                      }
+                    }}
+                    className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-surface-hover transition-all text-left dark:hover:bg-dark-surface-hover ${
+                      currentMode === mode.id ? 'bg-primary/5 dark:bg-primary/10' : ''
+                    }`}
+                  >
+                    <span className="text-xl">{mode.emoji}</span>
+                    <div className="flex-1">
+                      <div className="text-sm font-bold text-text-primary dark:text-dark-text-primary">{mode.name}</div>
+                      <div className="text-[10px] text-text-tertiary dark:text-dark-text-tertiary">{mode.description}</div>
+                    </div>
+                    {currentMode === mode.id && (
+                      <CheckCircle className="w-4 h-4 text-primary" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="flex-1 min-w-0">
             <h1 className="text-base font-black text-text-primary truncate dark:dark-text-primary">{videoData?.title}</h1>
             <div className="flex items-center gap-2 mt-0.5">

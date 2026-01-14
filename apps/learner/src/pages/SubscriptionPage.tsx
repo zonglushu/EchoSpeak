@@ -3,6 +3,24 @@ import { ArrowLeft, Check, X, Star, Zap, Download, HeadphonesIcon, Crown, HelpCi
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
+/**
+ * Supabase user metadata type
+ */
+interface UserMetadata {
+  full_name?: string;
+  tier?: 'free' | 'pro' | 'premium';
+  avatar_url?: string;
+}
+
+/**
+ * Supabase user type
+ */
+interface SupabaseUser {
+  id: string;
+  email: string;
+  user_metadata: UserMetadata;
+}
+
 interface Tier {
   id: 'free' | 'pro' | 'premium';
   name: string;
@@ -119,7 +137,7 @@ const FAQS = [
 
 export const SubscriptionPage: React.FC = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [currentTier, setCurrentTier] = useState<'free' | 'pro' | 'premium'>('free');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
 
@@ -134,8 +152,9 @@ export const SubscriptionPage: React.FC = () => {
 
   const handleSubscribe = (tierId: string) => {
     // TODO: 实现支付逻辑
-    console.log('Subscribe to tier:', tierId, 'Billing:', billingCycle);
-    alert(`即将跳转到支付页面...\n\n套餐: ${TIERS.find(t => t.id === tierId)?.name}\n周期: ${billingCycle === 'monthly' ? '月付' : '年付'}`);
+    const tier = TIERS.find(t => t.id === tierId);
+    if (!tier) return;
+    alert(`即将跳转到支付页面...\n\n套餐: ${tier.name}\n周期: ${billingCycle === 'monthly' ? '月付' : '年付'}`);
   };
 
   return (
