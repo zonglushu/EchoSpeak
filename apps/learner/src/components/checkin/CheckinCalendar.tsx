@@ -32,48 +32,6 @@ export const CheckinCalendar: React.FC<CheckinCalendarProps> = ({
   const [hoveredPosition, setHoveredPosition] = useState<{ x: number; y: number } | null>(null);
   const [viewMonths, setViewMonths] = useState<number>(3);
 
-  useEffect(() => {
-    loadCalendarData();
-  }, [userId, useDemoData, viewMonths, loadCalendarData]);
-
-  const loadCalendarData = useCallback(function loadCalendarDataInternal() {
-    setIsLoading(true);
-
-    if (useDemoData) {
-      const demoData = generateDemoDataInternal(viewMonths);
-      setCalendarData(demoData);
-      setIsLoading(false);
-      return;
-    }
-
-    if (!userId) {
-      setIsLoading(false);
-      return;
-    }
-
-    getCheckinCalendar(userId, viewMonths)
-      .then((checkins) => {
-        const dataMap = buildDateGrid(viewMonths);
-
-        checkins.forEach((checkin) => {
-          const existing = dataMap.get(checkin.checkin_date);
-          if (existing) {
-            existing.count = checkin.sentences_practiced || 1;
-            existing.duration = checkin.practice_duration_seconds;
-            existing.hasData = true;
-          }
-        });
-
-        setCalendarData(Array.from(dataMap.values()));
-      })
-      .catch((error) => {
-        console.error('Failed to load calendar data:', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [useDemoData, userId, viewMonths]);
-
   const buildDateGrid = useCallback(function buildDateGridInternal(months: number): Map<string, DayData> {
     const dataMap = new Map<string, DayData>();
     const today = new Date();
@@ -133,6 +91,48 @@ export const CheckinCalendar: React.FC<CheckinCalendarProps> = ({
 
     return data;
   }, []);
+
+  const loadCalendarData = useCallback(function loadCalendarDataInternal() {
+    setIsLoading(true);
+
+    if (useDemoData) {
+      const demoData = generateDemoDataInternal(viewMonths);
+      setCalendarData(demoData);
+      setIsLoading(false);
+      return;
+    }
+
+    if (!userId) {
+      setIsLoading(false);
+      return;
+    }
+
+    getCheckinCalendar(userId, viewMonths)
+      .then((checkins) => {
+        const dataMap = buildDateGrid(viewMonths);
+
+        checkins.forEach((checkin) => {
+          const existing = dataMap.get(checkin.checkin_date);
+          if (existing) {
+            existing.count = checkin.sentences_practiced || 1;
+            existing.duration = checkin.practice_duration_seconds;
+            existing.hasData = true;
+          }
+        });
+
+        setCalendarData(Array.from(dataMap.values()));
+      })
+      .catch((error) => {
+        console.error('Failed to load calendar data:', error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [useDemoData, userId, viewMonths, buildDateGrid, generateDemoDataInternal]);
+
+  useEffect(() => {
+    loadCalendarData();
+  }, [userId, useDemoData, viewMonths, loadCalendarData]);
 
   const getHeatmapColor = useCallback(function getHeatmapColorInternal(day: DayData): string {
     if (!day.hasData) {

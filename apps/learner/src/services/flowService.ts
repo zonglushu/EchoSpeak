@@ -9,11 +9,9 @@
 
 import { MediaAsset } from '@echospeak/types';
 import type { IDBOpenDBRequest, IDBVersionChangeEvent } from '../types/youtube';
+import { DB_CONFIG, DB_STORES } from '../types/mode';
 
 import { logError, ServiceError, getErrorMessage } from './errors';
-
-const DB_NAME = 'EchoSpeakStudioDB_v3';
-const STORE_NAME = 'youtube_library';
 
 export interface FlowItem extends MediaAsset {
     lastPlayedAt?: number;
@@ -36,11 +34,11 @@ export class FlowServiceError extends ServiceError {
  */
 const openDB = (): Promise<IDBDatabase> => {
     return new Promise((resolve, reject) => {
-        const request: IDBOpenDBRequest = indexedDB.open(DB_NAME, 1);
+        const request: IDBOpenDBRequest = indexedDB.open(DB_CONFIG.NAME, DB_CONFIG.VERSION);
         request.onupgradeneeded = (e: IDBVersionChangeEvent) => {
             const db = (e.target as IDBOpenDBRequest).result;
-            if (!db.objectStoreNames.contains(STORE_NAME)) {
-                db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+            if (!db.objectStoreNames.contains(DB_STORES.YOUTUBE_LIBRARY)) {
+                db.createObjectStore(DB_STORES.YOUTUBE_LIBRARY, { keyPath: 'id' });
             }
         };
         request.onsuccess = () => resolve(request.result);
@@ -73,8 +71,8 @@ export const flowService = {
         try {
             const db = await openDB();
             return new Promise((resolve, reject) => {
-                const transaction = db.transaction(STORE_NAME, 'readonly');
-                const request = transaction.objectStore(STORE_NAME).getAll();
+                const transaction = db.transaction(DB_STORES.YOUTUBE_LIBRARY, 'readonly');
+                const request = transaction.objectStore(DB_STORES.YOUTUBE_LIBRARY).getAll();
 
                 request.onsuccess = () => {
                     const results = request.result as FlowItem[];

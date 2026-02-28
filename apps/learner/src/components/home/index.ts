@@ -4,3 +4,8 @@ export { LearningBanner } from './LearningBanner';
 export { RecommendedVideos } from './RecommendedVideos';
 export { CategoryGrid } from './CategoryGrid';
 export { TrendingSection } from './TrendingSection';
+export { GlobalHeader } from '../GlobalHeader';
+export { FlowModeSection } from './FlowModeSection';
+export { BattleModeSection } from './BattleModeSection';
+export { ThinkModeSection } from './ThinkModeSection';
+export { ModeAnchorNav } from './ModeAnchorNav';

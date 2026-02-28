@@ -1,5 +1,5 @@
 ﻿import React, { useState, useRef, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, X, Languages } from 'lucide-react';
 import { TranscriptLine, PlaybackState, MediaAsset } from '@echospeak/types';
@@ -15,25 +15,21 @@ import { INITIAL_TRANSCRIPT } from './constants';
 import { generateProsodyNotation, bilingualizeText } from '@echospeak/services';
 import { HomePage } from './pages/HomePage';
 import { VideoLearningPage } from './pages/VideoLearningPage';
-import { DiscoverPage } from './pages/DiscoverPage';
-import { FavoritesPage } from './pages/FavoritesPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { HelpPage } from './pages/HelpPage';
 import { SubscriptionPage } from './pages/SubscriptionPage';
-import { LearnPage } from './pages/LearnPage';
-import { PracticePage } from './pages/PracticePage';
-import DashboardPage from './pages/DashboardPage';
-import LearningModesPage from './pages/LearningModesPage';
-import FlowPage from './pages/FlowPage';
-import BattlePage from './pages/BattlePage';
-import ThinkPage from './pages/ThinkPage';
 import FlowModeFeed from './pages/FlowModeFeed';
 import BattleModeFeed from './pages/BattleModeFeed';
 import ThinkModeFeed from './pages/ThinkModeFeed';
+import { BattleModePage } from './pages/BattleModePage';
+import { ThinkModePracticePage } from './pages/ThinkModePracticePage';
 import { MobileBottomNav, TabType } from './components/MobileBottomNav';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ChunkProvider } from './contexts/ChunkContext';
+import { ThinkProvider } from './contexts/ThinkContext';
+import { UserStatsProvider, useUserStats } from './contexts/UserStatsContext';
 import { OnboardingFlow, useOnboarding } from './components/OnboardingFlow';
+import { updateModeTheme, inferModeFromPath } from './utils/modeThemeUpdater';
 
 const DB_NAME = 'EchoSpeakStudioDB_v3';
 const STORE_NAME = 'youtube_library';
@@ -41,7 +37,8 @@ const LAST_ASSET_KEY = 'echo_speak_last_youtube_id';
 
 const openDB = (): Promise<IDBDatabase> => {
   return new Promise((resolve, reject) => {
-    const request: IDBOpenDBRequest = indexedDB.open(DB_NAME, 1);
+    // Use version 2 to match chunkDatabase.ts
+    const request: IDBOpenDBRequest = indexedDB.open(DB_NAME, 2);
     request.onupgradeneeded = (e: IDBVersionChangeEvent) => {
       const db = (e.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains(STORE_NAME)) {
@@ -178,6 +175,12 @@ const AppContent: React.FC = () => {
     }
   }, [transcript]);
 
+  // 监听路由变化自动更新模式主题色
+  useEffect(() => {
+    const mode = inferModeFromPath(location.pathname);
+    updateModeTheme(mode);
+  }, [location.pathname]);
+
   // YouTube 播放器回调
   const onPlayerReady = (event: YouTubePlayerReadyEvent) => {
     playerRef.current = event.target.player ?? null;
@@ -295,24 +298,31 @@ const AppContent: React.FC = () => {
 
   // 根据路径确定当前标签
   const getActiveTab = (): TabType => {
-    switch (location.pathname) {
-      case '/learn':
-        return 'learn';
-      case '/practice':
-        return 'practice';
-      case '/discover':
-        return 'favorites'; // Discover uses favorites tab as secondary
-      case '/favorites':
-        return 'favorites';
-      case '/profile':
-      case '/help':
-        return 'profile'; // 帮助中心也在"我的"标签
-      case '/video':
-      case '/video/:id':
-        return 'practice'; // 视频学习页面显示练习tab
-      default:
-        return 'home';
+    const path = location.pathname;
+
+    // Mode pages - use startsWith to support sub-paths
+    if (path.startsWith('/mode/flow')) return 'flow';
+    if (path.startsWith('/mode/battle')) return 'battle';
+    if (path.startsWith('/mode/think')) return 'think';
+
+    // Legacy battle route
+    if (path.startsWith('/battle/')) return 'battle';
+
+    // Profile and related pages
+    if (path === '/profile' || path === '/help' || path === '/subscription') return 'profile';
+
+    // Video pages - check mode parameter
+    if (path.startsWith('/video/')) {
+      const searchParams = new URLSearchParams(location.search);
+      const mode = searchParams.get('mode');
+      if (mode === 'flow') return 'flow';
+      if (mode === 'battle') return 'battle';
+      if (mode === 'think') return 'think';
+      return 'home'; // Default for videos without mode
     }
+
+    // Default to home
+    return 'home';
   };
 
   // 处理导航到视频学习页面
@@ -331,6 +341,32 @@ const AppContent: React.FC = () => {
   // 处理跳过引导
   const handleOnboardingSkip = () => {
     setShowOnboarding(false);
+  };
+
+  // Wrapper components for mode pages to inject userStats
+  const FlowModeFeedWrapper = () => {
+    const { userStats } = useUserStats();
+    return <FlowModeFeed userStats={userStats} />;
+  };
+
+  const BattleModeFeedWrapper = () => {
+    const { userStats } = useUserStats();
+    return <BattleModeFeed userStats={userStats} />;
+  };
+
+  const ThinkModeFeedWrapper = () => {
+    const { userStats } = useUserStats();
+    return <ThinkModeFeed userStats={userStats} />;
+  };
+
+  const BattleModePageWrapper = () => {
+    const { userStats } = useUserStats();
+    return <BattleModePage userStats={userStats} />;
+  };
+
+  const ThinkModePracticePageWrapper = () => {
+    const { userStats } = useUserStats();
+    return <ThinkModePracticePage userStats={userStats} />;
   };
 
   return (
@@ -398,6 +434,45 @@ const AppContent: React.FC = () => {
             className="flex-1"
           >
             <Routes location={location}>
+              {/* Old route redirects */}
+              <Route
+                path="/learn"
+                element={<Navigate to="/profile" state={{ showTutorial: true }} replace />}
+              />
+              <Route
+                path="/practice"
+                element={<Navigate to="/mode/flow" replace />}
+              />
+              <Route
+                path="/favorites"
+                element={<Navigate to="/mode/think?tab=favorites" replace />}
+              />
+              <Route
+                path="/discover"
+                element={<Navigate to="/" replace />}
+              />
+              <Route
+                path="/dashboard"
+                element={<Navigate to="/" replace />}
+              />
+              <Route
+                path="/learning-modes"
+                element={<Navigate to="/" replace />}
+              />
+              <Route
+                path="/flow"
+                element={<Navigate to="/mode/flow" replace />}
+              />
+              <Route
+                path="/battle"
+                element={<Navigate to="/mode/battle" replace />}
+              />
+              <Route
+                path="/think"
+                element={<Navigate to="/mode/think" replace />}
+              />
+
+              {/* New routes */}
               <Route
                 path="/"
                 element={
@@ -427,21 +502,14 @@ const AppContent: React.FC = () => {
                   />
                 }
               />
-              <Route path="/learn" element={<LearnPage />} />
-              <Route path="/practice" element={<PracticePage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/learning-modes" element={<LearningModesPage />} />
-              <Route path="/flow" element={<FlowPage />} />
-              <Route path="/battle" element={<BattlePage />} />
-              <Route path="/think" element={<ThinkPage />} />
-              <Route path="/discover" element={<DiscoverPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/mode/flow" element={<FlowModeFeedWrapper />} />
+              <Route path="/mode/battle" element={<BattleModeFeedWrapper />} />
+              <Route path="/battle/mission" element={<BattleModePageWrapper />} />
+              <Route path="/mode/think" element={<ThinkModeFeedWrapper />} />
+              <Route path="/mode/think/practice" element={<ThinkModePracticePageWrapper />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/help" element={<HelpPage />} />
               <Route path="/subscription" element={<SubscriptionPage />} />
-              <Route path="/mode/flow" element={<FlowModeFeed />} />
-              <Route path="/mode/battle" element={<BattleModeFeed />} />
-              <Route path="/mode/think" element={<ThinkModeFeed />} />
             </Routes>
           </motion.div>
         </AnimatePresence>
@@ -452,12 +520,12 @@ const AppContent: React.FC = () => {
         <MobileBottomNav activeTab={getActiveTab()} onTabChange={(tab) => {
           const routes: Record<TabType, string> = {
             home: '/',
-            learn: '/learn',
-            practice: '/practice',
-            favorites: '/favorites',
+            flow: '/mode/flow',
+            battle: '/mode/battle',
+            think: '/mode/think',
             profile: '/profile',
           };
-          window.location.href = routes[tab];
+          navigate(routes[tab]);
         }} />
       )}
     </>
@@ -468,9 +536,13 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       <ChunkProvider>
-        <Router>
-          <AppContent />
-        </Router>
+        <ThinkProvider>
+          <UserStatsProvider>
+            <Router>
+              <AppContent />
+            </Router>
+          </UserStatsProvider>
+        </ThinkProvider>
       </ChunkProvider>
     </ThemeProvider>
   );

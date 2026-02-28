@@ -131,6 +131,19 @@ export interface DialogueTurn {
 }
 
 /**
+ * Battle mode result from completing a mission
+ */
+export interface BattleResult {
+  overallScore: number;          // 0-1
+  pronunciationScore: number;    // 0-1
+  fluencyScore: number;          // 0-1
+  contentScore: number;          // 0-1
+  passed: boolean;
+  feedback: Array<{ category: string; message: string }>;
+  timestamp: number;
+}
+
+/**
  * Think Mode - Exercise types
  */
 export type ExerciseType =
@@ -235,5 +248,5 @@ export const DB_STORES = {
  */
 export const DB_CONFIG = {
   NAME: 'EchoSpeakStudioDB_v3',
-  VERSION: 1
+  VERSION: 3
 } as const;

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Target, ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -8,7 +8,13 @@ type PathType = 'browse' | 'bymode';
 export function FloatingPathToggle() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // Only show on home page
+  if (location.pathname !== '/') {
+    return null;
+  }
 
   const currentPath = (searchParams.get('path') as PathType) || 'browse';
 

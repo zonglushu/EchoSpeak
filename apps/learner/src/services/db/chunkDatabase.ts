@@ -10,7 +10,8 @@
 import {
   SavedChunk,
   DB_CONFIG,
-  DB_STORES
+  DB_STORES,
+  BattleResult
 } from '../../types/mode';
 
 /**
@@ -79,6 +80,14 @@ const STORE_SCHEMAS: readonly StoreSchema[] = [
       { name: 'chunkId', keyPath: 'chunkId', unique: false },
       { name: 'reviewedAt', keyPath: 'reviewedAt', unique: false }
     ]
+  },
+  {
+    name: 'YOUTUBE_LIBRARY',
+    keyPath: 'id',
+    autoIncrement: false,
+    indexes: [
+      { name: 'updatedAt', keyPath: 'updatedAt', unique: false }
+    ]
   }
 ] as const;
 
@@ -123,9 +132,31 @@ export function openDatabase(): Promise<IDBDatabase> {
 
     request.onupgradeneeded = (event: Event) => {
       const db = (event.target as IDBOpenDBRequest).result;
+      const transaction = (event as IDBVersionChangeEvent).oldVersion;
 
-      for (const schema of STORE_SCHEMAS) {
-        createObjectStore(db, schema);
+      // Handle database migration
+      if (transaction < 1) {
+        // Initial database creation
+        for (const schema of STORE_SCHEMAS) {
+          createObjectStore(db, schema);
+        }
+      } else {
+        // Migration: Delete old stores and recreate with new schema
+        // This is a simple approach for development - in production you'd
+        // want to migrate data instead of deleting it
+        const existingStores = Array.from(db.objectStoreNames);
+
+        // Delete old object stores
+        for (const storeName of existingStores) {
+          if (db.objectStoreNames.contains(storeName)) {
+            db.deleteObjectStore(storeName);
+          }
+        }
+
+        // Create new object stores with current schema
+        for (const schema of STORE_SCHEMAS) {
+          createObjectStore(db, schema);
+        }
       }
     };
 
@@ -158,6 +189,37 @@ export function closeDatabase(): void {
     cachedDatabase.close();
     cachedDatabase = null;
   }
+}
+
+/**
+ * Deletes the entire database. Useful for development/testing or schema changes.
+ *
+ * @returns Promise that resolves when the database is deleted
+ * @throws {DatabaseError} If the deletion fails
+ */
+export function deleteDatabase(): Promise<void> {
+  closeDatabase();
+
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.deleteDatabase(DB_CONFIG.NAME);
+
+    request.onsuccess = () => {
+      resolve();
+    };
+
+    request.onerror = () => {
+      reject(new DatabaseError(
+        `Failed to delete database: ${request.error?.message ?? 'Unknown error'}`,
+        request.error
+      ));
+    };
+
+    request.onblocked = () => {
+      reject(new DatabaseError(
+        'Database deletion blocked. Close all tabs that might be using the database.'
+      ));
+    };
+  });
 }
 
 /**
@@ -324,4 +386,167 @@ export function saveChunks(db: IDBDatabase, chunks: SavedChunk[]): Promise<strin
       request.onsuccess = () => ids.push(chunk.id);
     }
   });
+}
+
+/**
+ * Practice session record type for Battle mode sessions.
+ */
+export interface PracticeSession {
+  id?: number; // Auto-incremented
+  mode: 'flow' | 'battle' | 'think';
+  timestamp: number;
+  overallScore: number;
+  pronunciationScore: number;
+  fluencyScore: number;
+  contentScore: number;
+  passed: boolean;
+  feedback: Array<{ category: string; message: string }>;
+}
+
+/**
+ * Saves a practice session to the database.
+ *
+ * @param session - The practice session to save
+ * @returns Promise that resolves when the save is complete
+ * @throws {DatabaseError} If the write operation fails
+ */
+export async function savePracticeSession(
+  session: PracticeSession
+): Promise<number> {
+  const db = await openDatabase();
+  return withTransaction(db, DB_STORES.PRACTICE_SESSIONS, 'readwrite', (store) =>
+    store.add(session)
+  ).then((key) => key as number);
+}
+
+/**
+ * Retrieves all practice sessions for a specific mode.
+ *
+ * @param mode - The learning mode to filter by ('flow' | 'battle' | 'think')
+ * @returns Array of practice sessions, sorted by timestamp (newest first)
+ * @throws {DatabaseError} If the query operation fails
+ */
+export async function getPracticeSessionsByMode(
+  mode: 'flow' | 'battle' | 'think'
+): Promise<PracticeSession[]> {
+  const db = await openDatabase();
+  return withTransaction(db, DB_STORES.PRACTICE_SESSIONS, 'readonly', (store) => {
+    const index = store.index('mode');
+    return index.getAll(mode);
+  }).then((sessions) => {
+    return sessions.sort((a, b) => b.timestamp - a.timestamp);
+  });
+}
+
+/**
+ * Retrieves all practice sessions within a date range.
+ *
+ * @param startTime - Start timestamp (inclusive)
+ * @param endTime - End timestamp (inclusive)
+ * @returns Array of practice sessions in the date range
+ * @throws {DatabaseError} If the query operation fails
+ */
+export async function getPracticeSessionsByDateRange(
+  startTime: number,
+  endTime: number
+): Promise<PracticeSession[]> {
+  const db = await openDatabase();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(DB_STORES.PRACTICE_SESSIONS, 'readonly');
+    const store = transaction.objectStore(DB_STORES.PRACTICE_SESSIONS);
+    const index = store.index('timestamp');
+    const request = index.openCursor(
+      IDBKeyRange.bound(startTime, endTime)
+    );
+
+    const sessions: PracticeSession[] = [];
+
+    request.onsuccess = () => {
+      const cursor = request.result;
+      if (cursor) {
+        sessions.push(cursor.value);
+        cursor.continue();
+      } else {
+        resolve(sessions.sort((a, b) => b.timestamp - a.timestamp));
+      }
+    };
+
+    request.onerror = () => reject(new DatabaseError(
+      `Failed to query practice sessions: ${request.error?.message ?? 'Unknown error'}`,
+      request.error
+    ));
+  });
+}
+
+/**
+ * Converts a BattleResult to a PracticeSession for storage.
+ *
+ * @param result - The battle result to convert
+ * @returns A practice session object
+ */
+export function battleResultToPracticeSession(result: BattleResult): PracticeSession {
+  return {
+    mode: 'battle',
+    timestamp: result.timestamp,
+    overallScore: result.overallScore,
+    pronunciationScore: result.pronunciationScore,
+    fluencyScore: result.fluencyScore,
+    contentScore: result.contentScore,
+    passed: result.passed,
+    feedback: result.feedback,
+  };
+}
+
+/**
+ * Think mode exercise result type
+ */
+export interface ThinkExerciseResult {
+  type: 'chunk-activation' | 'video-retelling' | 'logic-rewriting';
+  timestamp: number;
+  score: number; // 0-5
+  feedback: string;
+  timeSpent: number;
+}
+
+/**
+ * Saves a Think mode exercise result to the database.
+ *
+ * @param result - The exercise result to save
+ * @returns Promise that resolves to the session ID
+ * @throws {DatabaseError} If the write operation fails
+ */
+export async function saveThinkExerciseResult(
+  result: ThinkExerciseResult
+): Promise<number> {
+  const db = await openDatabase();
+
+  const session: PracticeSession = {
+    mode: 'think',
+    timestamp: result.timestamp,
+    overallScore: result.score,
+    pronunciationScore: 0, // Not applicable for Think mode
+    fluencyScore: 0, // Not applicable for Think mode
+    contentScore: result.score,
+    passed: result.score >= 3, // Consider passed if score >= 3
+    feedback: [
+      {
+        category: result.type,
+        message: result.feedback,
+      },
+    ],
+  };
+
+  return withTransaction(db, DB_STORES.PRACTICE_SESSIONS, 'readwrite', (store) =>
+    store.add(session)
+  ).then((key) => key as number);
+}
+
+/**
+ * Retrieves all Think mode exercise results.
+ *
+ * @returns Promise resolving to array of Think exercise results
+ * @throws {DatabaseError} If the query operation fails
+ */
+export async function getThinkExerciseResults(): Promise<PracticeSession[]> {
+  return getPracticeSessionsByMode('think');
 }

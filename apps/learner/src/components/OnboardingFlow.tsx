@@ -16,8 +16,9 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedLevel, setSelectedLevel] = useState<'beginner' | 'intermediate' | 'advanced'>('intermediate');
+  const [selectedMode, setSelectedMode] = useState<'flow' | 'battle' | 'think' | null>(null);
 
-  const totalPages = 4;
+  const totalPages = 6;
   const isLastPage = currentPage === totalPages - 1;
 
   const pages = [
@@ -132,6 +133,114 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
       ),
     },
     {
+      icon: '🎬',
+      title: '观看教学演示',
+      subtitle: '看看如何实际应用发音谱子',
+      content: (
+        <div className="space-y-4">
+          <p className="text-text-secondary dark:text-dark-text-secondary">
+            通过实际示例，了解如何使用发音谱子进行跟读练习
+          </p>
+          <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-4 aspect-video flex items-center justify-center">
+            <p className="text-gray-500 dark:text-gray-400 text-sm">🎥 教学视频占位符</p>
+          </div>
+          <p className="text-xs text-text-secondary dark:text-dark-text-secondary text-center">
+            看完演示后，你将开始第一个Flow模式练习！
+          </p>
+        </div>
+      ),
+    },
+    {
+      icon: '🎯',
+      title: '选择你的学习模式',
+      subtitle: '我们提供三种模式，适应不同场景',
+      content: (
+        <div className="space-y-4">
+          <p className="text-text-secondary dark:text-dark-text-secondary">
+            根据你的时间和学习目标，选择最适合的模式
+          </p>
+
+          <div className="space-y-3">
+            <button
+              onClick={() => setSelectedMode('flow')}
+              className={`w-full p-4 rounded-xl border-2 transition-all ${
+                selectedMode === 'flow'
+                  ? 'bg-teal-50 border-teal-500 dark:bg-teal-900/20'
+                  : 'bg-surface border-border hover:border-teal-300 dark:bg-dark-surface dark:border-dark-border'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">🌊</span>
+                <div className="text-left flex-1">
+                  <p className="text-sm font-bold text-text-primary dark:text-dark-text-primary">Flow 模式</p>
+                  <p className="text-xs text-text-secondary dark:text-dark-text-secondary">晨间通勤、家务时间的轻量跟读</p>
+                  <p className="text-xs text-teal-600 dark:text-teal-400 mt-1">⏱️ 10-20 分钟</p>
+                </div>
+                {selectedMode === 'flow' && (
+                  <div className="w-6 h-6 bg-teal-500 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  </div>
+                )}
+              </div>
+            </button>
+
+            <button
+              onClick={() => setSelectedMode('battle')}
+              className={`w-full p-4 rounded-xl border-2 transition-all ${
+                selectedMode === 'battle'
+                  ? 'bg-rose-50 border-rose-500 dark:bg-rose-900/20'
+                  : 'bg-surface border-border hover:border-rose-300 dark:bg-dark-surface dark:border-dark-border'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">⚔️</span>
+                <div className="text-left flex-1">
+                  <p className="text-sm font-bold text-text-primary dark:text-dark-text-primary">Battle 模式</p>
+                  <p className="text-xs text-text-secondary dark:text-dark-text-secondary">晚间专注的实战角色扮演</p>
+                  <p className="text-xs text-rose-600 dark:text-rose-400 mt-1">⏱️ 20-40 分钟</p>
+                </div>
+                {selectedMode === 'battle' && (
+                  <div className="w-6 h-6 bg-rose-500 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  </div>
+                )}
+              </div>
+            </button>
+
+            <button
+              onClick={() => setSelectedMode('think')}
+              className={`w-full p-4 rounded-xl border-2 transition-all ${
+                selectedMode === 'think'
+                  ? 'bg-indigo-50 border-indigo-500 dark:bg-indigo-900/20'
+                  : 'bg-surface border-border hover:border-indigo-300 dark:bg-dark-surface dark:border-dark-border'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">💡</span>
+                <div className="text-left flex-1">
+                  <p className="text-sm font-bold text-text-primary dark:text-dark-text-primary">Think 模式</p>
+                  <p className="text-xs text-text-secondary dark:text-dark-text-secondary">睡前复盘的思维内化练习</p>
+                  <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-1">⏱️ 5-15 分钟</p>
+                </div>
+                {selectedMode === 'think' && (
+                  <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  </div>
+                )}
+              </div>
+            </button>
+          </div>
+
+          <button
+            onClick={() => setSelectedMode(null)}
+            className="w-full py-3 bg-gray-100 dark:bg-gray-800 rounded-xl text-xs font-bold text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+          >
+            先去看看，稍后再选
+          </button>
+        </div>
+      ),
+    },
+    {
       icon: '🚀',
       title: '准备开始了！',
       subtitle: '选择你的英语水平',
@@ -220,6 +329,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({
     if (isLastPage) {
       // 完成引导
       localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+      localStorage.setItem('echospeak_selected_mode', selectedMode || 'none');
       onComplete?.(selectedLevel);
     } else {
       setCurrentPage(prev => prev + 1);

@@ -200,7 +200,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       // Use default error fallback
       return (
-        <ErrorFallback
+        <ErrorFallbackWrapper
           error={this.state.error}
           resetError={this.handleReset}
           errorMessage={this.props.errorMessage}

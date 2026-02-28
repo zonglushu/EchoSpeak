@@ -26,6 +26,11 @@
      EchoSpeak Professional Design Variables
      ======================================== */
 
+  /* Mode Theme Colors - Dynamic based on active learning mode */
+  --mode-gradient-from: #14b8a6;    /* Default Flow: teal-500 */
+  --mode-gradient-to: #10b981;       /* Default Flow: emerald-500 */
+  --mode-rgb: 20, 184, 166;         /* Default Flow: teal-500 RGB */
+
   /* Core Colors - Professional Teal Fresh */
   --color-primary: #0D9488;
   --color-primary-light: #2DD4BF;
@@ -141,6 +146,15 @@
     min-height: 100vh;
     min-height: 100dvh;
     /* 动态视口高度，适配移动端浏览器栏 */
+    /* 确保页面可以滚动 */
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* 确保 root 元素也能滚动 */
+  #root {
+    min-height: 100vh;
+    height: auto;
   }
 
   /* 文本不可选择（提升触摸体验） */

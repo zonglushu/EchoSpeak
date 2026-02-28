@@ -2,6 +2,7 @@
 import { Clock, CheckCircle, Trophy, ChevronRight, Bell, HelpCircle, LogOut, Sparkles, ChevronDown, Bug, Target, TrendingUp, Calendar, Award, Settings, PlayCircle, Zap, Shield, Star, Medal, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ThemeToggle } from '../components/ThemeToggle';
+import { GlobalHeader } from '../components/GlobalHeader';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { supabase } from '../lib/supabase';
@@ -9,6 +10,8 @@ import { useAuth } from '../components/AuthProvider';
 import { StreakCounter, CheckinCalendar } from '../components/checkin';
 import { getUserStats, formatDuration, getUserAchievements, getPracticeHistory } from '../services/p0FeaturesClient';
 import { UserStats, UserAchievement, PracticeHistory } from '@echospeak/types';
+import { ProgressDashboard, SettingsPanel } from '../components/ui';
+import type { DashboardStats } from '../components/ui/ProgressDashboard';
 
 interface ProfilePageProps {
   onNavigateToSettings?: () => void;
@@ -23,6 +26,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
   const [achievements, setAchievements] = useState<UserAchievement[]>([]);
   const [practiceHistory, setPracticeHistory] = useState<PracticeHistory[]>([]);
   const [showDevTools, setShowDevTools] = useState(false);
+  const [showSettingsPanel, setShowSettingsPanel] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -97,6 +101,17 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
 
   return (
     <div className="min-h-screen bg-teal-50/30 dark:bg-gray-950 pb-24">
+      {/* Global Header - Compact Mode (no back button for profile) */}
+      <GlobalHeader
+        mode="compact"
+        userStats={userStats}
+        showBackButton={false}
+        showStreak={false}
+        showAvatar={false}
+        modeTitle="个人中心"
+        modeDescription="查看你的学习进度和成就"
+      />
+
       {/* 顶部用户卡片 - 使用 Glassmorphism 设计 */}
       <div className="relative overflow-hidden bg-gradient-to-br from-teal-600 via-teal-500 to-cyan-500 px-4 pt-10 pb-16">
         {/* 装饰性背景圆形 */}
@@ -145,6 +160,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
 
             <motion.button
               whileHover={{ rotate: 90 }}
+              onClick={() => setShowSettingsPanel(true)}
               className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 text-white"
             >
               <Settings className="w-5 h-5" />
@@ -192,10 +208,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
             {/* 等级进度条 */}
             <div className="space-y-3 border-t border-gray-100 dark:border-gray-800 pt-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-black text-white/90 drop-shadow-sm">
+                <span className="text-sm font-black text-gray-900 dark:text-white/90 drop-shadow-sm dark:drop-shadow-sm">
                   Lv.{userStats?.level || 1} Novice
                 </span>
-                <span className="flex items-center gap-1.5 text-sm font-black text-white/90">
+                <span className="flex items-center gap-1.5 text-sm font-black text-gray-900 dark:text-white/90">
                   <TrendingUp className="h-4 w-4 text-orange-300" />
                   {userStats?.total_xp || 0} XP
                 </span>
@@ -209,7 +225,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
                 />
               </div>
               <div className="flex justify-end">
-                <span className="text-[10px] font-bold text-white/70 uppercase tracking-widest">
+                <span className="text-[10px] font-bold text-gray-500 dark:text-white/70 uppercase tracking-widest">
                   Next Level: {(Math.floor((userStats?.total_xp || 0) / 1000) + 1) * 1000} XP
                 </span>
               </div>
@@ -228,6 +244,36 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
         {/* 打卡连击 */}
         <motion.section variants={itemVariants}>
           <StreakCounter userId={userId} />
+        </motion.section>
+
+        {/* 综合进度面板 */}
+        <motion.section variants={itemVariants}>
+          <ProgressDashboard
+            stats={{
+              totalStudyTime: Math.floor((userStats?.total_practice_seconds || 0) / 60),
+              streakDays: userStats?.current_streak || 0,
+              chunksCollected: userStats?.total_sentences_practiced || 0,
+              chunksMastered: Math.floor((userStats?.total_sentences_practiced || 0) * 0.7),
+              sessionsCompleted: userStats?.total_videos_completed || 0,
+              currentLevel: userStats?.level || 1,
+              xp: userStats?.total_xp || 0,
+              xpToNextLevel: ((Math.floor((userStats?.total_xp || 0) / 1000) + 1) * 1000) - (userStats?.total_xp || 0),
+            }}
+            modeUsage={[
+              { mode: 'flow', minutes: 45, sessions: 5, percentage: 45 },
+              { mode: 'battle', minutes: 35, sessions: 3, percentage: 35 },
+              { mode: 'think', minutes: 20, sessions: 2, percentage: 20 },
+            ]}
+            achievements={achievements.map(a => ({
+              id: a.id,
+              title: a.achievement?.name || 'Achievement',
+              description: a.achievement?.description || '',
+              icon: '🏆',
+              unlocked: true,
+              unlockedAt: a.unlocked_at || new Date().toISOString(),
+            }))}
+            compact={true}
+          />
         </motion.section>
 
         {/* 练习日历 */}
@@ -387,7 +433,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
               <ChevronRight className="h-5 w-5 text-gray-300 transition-transform duration-200 group-hover:translate-x-1" />
             </button>
 
-            <button className="group flex w-full cursor-pointer items-center gap-5 border-b border-gray-50 p-6 transition-colors duration-200 hover:bg-indigo-50/50 dark:border-gray-800 dark:hover:bg-indigo-900/10">
+            <button
+              onClick={() => setShowSettingsPanel(true)}
+              className="group flex w-full cursor-pointer items-center gap-5 border-b border-gray-50 p-6 transition-colors duration-200 hover:bg-indigo-50/50 dark:border-gray-800 dark:hover:bg-indigo-900/10"
+            >
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 dark:bg-indigo-900/30 transition-transform duration-200 group-hover:scale-110">
                 <Settings className="h-6 w-6" />
               </div>
@@ -457,6 +506,12 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigateToSettings }
           </p>
         </motion.div>
       </motion.div>
+
+      {/* Settings Panel */}
+      <SettingsPanel
+        isOpen={showSettingsPanel}
+        onClose={() => setShowSettingsPanel(false)}
+      />
     </div>
   );
 };
